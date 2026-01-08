@@ -8,3 +8,18 @@ __pycache__/
 # Virtual environment
 .venv/
 
+# Environment variables
+.env
+*.env
+!.env.example
+
+# API Keys
+*.key
+secrets/
+config/api_keys.py
+
+# Outputs
+outputs/
+logs/
+*.log
+

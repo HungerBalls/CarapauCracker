@@ -135,7 +135,46 @@ curl, wget
 colorama
 requests
 fpdf
+rich
+python-dotenv
 ```
+
+---
+
+## 🔐 API Configuration
+
+### NVD API Key (Optional but Recommended)
+
+CarapauCracker uses the NIST National Vulnerability Database (NVD) for CVE checking.
+
+**Without API key:** 5 requests per 30 seconds  
+**With API key:** 50 requests per 30 seconds (FREE)
+
+#### Get your free API key:
+
+1. Visit: https://nvd.nist.gov/developers/request-an-api-key
+2. Fill out the form (name, email, organization)
+3. Receive key via email (usually within minutes)
+
+#### Configure the key:
+
+**Option 1: .env file (recommended for local use)**
+```bash
+cp .env.example .env
+# Edit .env and add your key:
+NVD_API_KEY=your-api-key-here
+```
+
+**Option 2: Environment variable**
+```bash
+export NVD_API_KEY="your-api-key-here"
+```
+
+**Option 3: GitHub Secrets (for CI/CD)**
+- Go to repository Settings → Secrets and variables → Actions
+- Click "New repository secret"
+- Name: `NVD_API_KEY`
+- Value: your API key
 
 ---
 
@@ -152,7 +191,11 @@ cd CarapauCracker
 chmod +x install.sh
 sudo ./install.sh
 
-# 3. Start the framework
+# 3. Configure API keys (optional)
+cp .env.example .env
+# Edit .env and add your NVD_API_KEY
+
+# 4. Start the framework
 python3 main.py
 ```
 
@@ -175,7 +218,11 @@ sudo apt install nmap nikto hydra gobuster ffuf whatweb \
 # 4. Create necessary directories
 mkdir -p outputs wordlists
 
-# 5. Run
+# 5. Configure API keys (optional)
+cp .env.example .env
+# Edit .env and add your NVD_API_KEY
+
+# 6. Run
 python3 main.py
 ```
 
