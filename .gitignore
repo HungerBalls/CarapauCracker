@@ -1,3 +1,7 @@
+# Environment variables
+.env
+*.key
+
 # Python cache and compiled files
 __pycache__/
 *.pyc
@@ -7,4 +11,10 @@ __pycache__/
 
 # Virtual environment
 .venv/
+
+# Outputs
+outputs/
+
+# Wordlists
+wordlists/
 
