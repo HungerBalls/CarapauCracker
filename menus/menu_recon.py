@@ -3,6 +3,8 @@
 from modules.recon import basic_recon, whois_lookup, geoip_lookup, reverse_dns, banner_grab
 from modules.utils import banner, log, append_section
 from colorama import Fore
+from rich.panel import Panel
+from rich.console import Console
 
 
 def run_recon_menu(target, run_dir, report_path, session_log):
@@ -10,16 +12,20 @@ def run_recon_menu(target, run_dir, report_path, session_log):
     Reconnaissance Submenu — v2
     Now everything uses central logging (session.log) and clean output.
     """
+    console = Console()
+    
     while True:
         banner()
-        print(Fore.CYAN + "╭────────────[ SUBMENU: RECONNAISSANCE ]────────────╮")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- WHOIS Lookup")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- GeoIP Lookup")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- Reverse DNS")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- Banner Grabbing (FTP, SSH, HTTP)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Run Complete Reconnaissance 🔍")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Return to Main Menu")
-        print(Fore.CYAN + "╰───────────────────────────────────────────────────╯")
+        console.print(Panel.fit(
+            "[cyan]1[/cyan] - WHOIS Lookup\n"
+            "[cyan]2[/cyan] - GeoIP Lookup\n"
+            "[cyan]3[/cyan] - Reverse DNS\n"
+            "[cyan]4[/cyan] - Banner Grabbing (FTP, SSH, HTTP)\n"
+            "[cyan]5[/cyan] - Run Complete Reconnaissance 🔍\n"
+            "[cyan]0[/cyan] - Return to Main Menu",
+            title="🔍 Reconnaissance Menu",
+            border_style="cyan"
+        ))
 
         opt = input(Fore.YELLOW + "\n[»] Choose an option: ").strip()
 

@@ -1,4 +1,4 @@
-# utils.py — CarapauCracker v2
+# utils.py — CarapauCracker v3
 from pathlib import Path
 from datetime import datetime
 import subprocess
@@ -6,6 +6,8 @@ import shutil
 import os
 import sys
 from colorama import Fore, init
+from rich.console import Console
+from rich.panel import Panel
 
 init(autoreset=True)
 
@@ -18,15 +20,17 @@ def banner():
     """Clear screen and display CarapauCracker banner"""
     try:
         os.system("clear" if os.name == "posix" else "cls")
-        print(Fore.CYAN + r"""
-   ____    _    ____      _    ____   _   _   _  ____ ____      _    ____ _  _______ ____  
-  / ___|  / \  |  _ \    / \  |  _ \ / \ | | | |/ ___|  _ \    / \  / ___| |/ / ____|  _ \ 
- | |     / _ \ | |_) |  / _ \ | |_) / _ \| | | | |   | |_) |  / _ \| |   | ' /|  _| | |_) |
- | |___ / ___ \|  _ <  / ___ \|  __/ ___ \ |_| | |___|  _ <  / ___ \ |___| . \| |___|  _ < 
-  \____/_/   \_\_| \_\/_/   \_\_| /_/   \_\___/ \____|_| \_\/_/   \_\____|_|\_\_____|_| \_\
-  
-    """ + Fore.YELLOW + "         Advanced Pentesting Framework 🐟\n" +
-              Fore.MAGENTA + "                  by HungerBalls  🎯  |  CarapauCracker v2\n")
+        console = Console()
+        console.print(Panel.fit(
+            "[bold cyan]   ____    _    ____      _    ____   _   _   _  ____ ____      _    ____ _  _______ ____  [/bold cyan]\n"
+            "[bold cyan]  / ___|  / \\  |  _ \\    / \\  |  _ \\ / \\ | | | |/ ___|  _ \\    / \\  / ___| |/ / ____|  _ \\ [/bold cyan]\n"
+            "[bold cyan] | |     / _ \\ | |_) |  / _ \\ | |_) / _ \\| | | | |   | |_) |  / _ \\| |   | ' /|  _| | |_) |[/bold cyan]\n"
+            "[bold cyan] | |___ / ___ \\|  _ <  / ___ \\|  __/ ___ \\ |_| | |___|  _ <  / ___ \\ |___| . \\| |___|  _ < [/bold cyan]\n"
+            "[bold cyan]  \\____/_/   \\_\\_| \\_\\/_/   \\_\\_| /_/   \\_\\___/ \\____|_| \\_\\/_/   \\_\\____|_|\\_\\_____|_| \\_\\[/bold cyan]\n\n"
+            "[yellow]         Advanced Pentesting Framework 🐟[/yellow]\n"
+            "[magenta]                  by HungerBalls  🎯  |  CarapauCracker v3[/magenta]",
+            border_style="cyan"
+        ))
     except Exception as e:
         print(Fore.RED + f"[✘] Error displaying banner: {e}")
 

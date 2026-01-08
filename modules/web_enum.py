@@ -1,11 +1,23 @@
-# web_enum.py — CarapauCracker v2
+# web_enum.py — CarapauCracker v3
 from modules.utils import run_command_live, append_section, log
 from colorama import Fore
+from rich.tree import Tree
+from rich.console import Console
 
 
 # ================================================================
 # 🌐 BASE EXECUTION
 # ================================================================
+
+def display_directory_results(directories):
+    """Display directory enumeration results in a tree view"""
+    console = Console()
+    tree = Tree("📁 Discovered Directories")
+    for dir_info in directories:
+        tree.add(f"[green]{dir_info['path']}[/green] ({dir_info['status']})")
+    console.print(tree)
+
+
 def run_web_tool(cmd: list, title: str, report_path, log_file=None):
     """
     Execute any web command and show output in real-time.

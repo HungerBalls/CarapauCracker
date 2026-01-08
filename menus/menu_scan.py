@@ -1,24 +1,32 @@
 from modules.scan import (
     nmap_quick, nmap_detailed, nmap_full_tcp,
-    nmap_udp_scan, nmap_os_detection, full_scan_workflow
+    nmap_udp_scan, nmap_os_detection, full_scan_workflow,
+    full_scan_with_cve
 )
 from modules.utils import banner, log
 from colorama import Fore
+from rich.panel import Panel
+from rich.console import Console
 
 def run_scan_menu(target, run_dir, report_path, session_log):
     """Scanning submenu for port and system scanning"""
+    console = Console()
+    
     while True:
         banner()
-        print(Fore.CYAN + "╭────────────[ SUBMENU: SCANNING - NMAP ]────────────╮")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- Quick Scan (open ports)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Detailed Scan (-sV -sC)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- Full TCP Scan (-p-)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- UDP Scan (Top 50)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- OS Detection (-O)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Aggressive Scan (-A)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 7 " + Fore.WHITE + "- Run Complete Scan 🚀")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Return")
-        print(Fore.CYAN + "╰────────────────────────────────────────────────────╯")
+        console.print(Panel.fit(
+            "[cyan]1[/cyan] - Quick Scan (open ports)\n"
+            "[cyan]2[/cyan] - Detailed Scan (-sV -sC)\n"
+            "[cyan]3[/cyan] - Full TCP Scan (-p-)\n"
+            "[cyan]4[/cyan] - UDP Scan (Top 50)\n"
+            "[cyan]5[/cyan] - OS Detection (-O)\n"
+            "[cyan]6[/cyan] - Aggressive Scan (-A)\n"
+            "[cyan]7[/cyan] - Run Complete Scan 🚀\n"
+            "[cyan]8[/cyan] - Full Scan + CVE Check 🔍\n"
+            "[cyan]0[/cyan] - Return",
+            title="📡 Port Scanning Menu",
+            border_style="cyan"
+        ))
 
         opt = input(Fore.YELLOW + "\n[»] Choose option: ").strip()
 
@@ -40,6 +48,8 @@ def run_scan_menu(target, run_dir, report_path, session_log):
             nmap_aggressive(target, report_path, session_log)
         elif opt == "7":
             full_scan_workflow(target, report_path, session_log)
+        elif opt == "8":
+            full_scan_with_cve(target, report_path, session_log)
         else:
             log(Fore.RED + "[✘] Invalid option. Try again.", session_log)
 

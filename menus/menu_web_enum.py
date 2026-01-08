@@ -8,26 +8,32 @@ from modules.web_enum import (
 )
 from modules.utils import banner, log
 from colorama import Fore
+from rich.panel import Panel
+from rich.console import Console
 
 DEFAULT_WORDLIST = "wordlists/common.txt"
 
 def run_web_enum_menu(target, run_dir, report_path, session_log):
     """Advanced web enumeration submenu"""
+    console = Console()
+    
     while True:
         banner()
-        print(Fore.CYAN + "╭────────────[ SUBMENU: ADVANCED WEB ENUMERATION ]────────────╮")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- HTTP Headers")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Robots.txt")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- HTTP Methods")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- WhatWeb (technology detection)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Nikto (vulnerabilities)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Gobuster (directories)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 7 " + Fore.WHITE + "- FFUF (fast fuzzing)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 8 " + Fore.WHITE + "- Nmap HTTP Scripts")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 9 " + Fore.WHITE + "- SSLScan (443)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 10 " + Fore.WHITE + "- Complete Web Enumeration 🚀")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Return")
-        print(Fore.CYAN + "╰─────────────────────────────────────────────────────────────╯")
+        console.print(Panel.fit(
+            "[cyan]1[/cyan] - HTTP Headers\n"
+            "[cyan]2[/cyan] - Robots.txt\n"
+            "[cyan]3[/cyan] - HTTP Methods\n"
+            "[cyan]4[/cyan] - WhatWeb (technology detection)\n"
+            "[cyan]5[/cyan] - Nikto (vulnerabilities)\n"
+            "[cyan]6[/cyan] - Gobuster (directories)\n"
+            "[cyan]7[/cyan] - FFUF (fast fuzzing)\n"
+            "[cyan]8[/cyan] - Nmap HTTP Scripts\n"
+            "[cyan]9[/cyan] - SSLScan (443)\n"
+            "[cyan]10[/cyan] - Complete Web Enumeration 🚀\n"
+            "[cyan]0[/cyan] - Return",
+            title="🌐 Advanced Web Enumeration Menu",
+            border_style="cyan"
+        ))
 
         opt = input(Fore.YELLOW + "\n[»] Choose an option: ").strip()
         if opt == "0":
