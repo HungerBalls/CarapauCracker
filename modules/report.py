@@ -20,8 +20,8 @@ def export_pdf(report_path, output_pdf):
         for line in text.splitlines():
             try:
                 pdf.cell(0, 5, txt=line.encode('latin-1', 'ignore').decode('latin-1'), ln=True)
-            except Exception as e:
-                # Skip problematic lines
+            except (UnicodeError, UnicodeEncodeError) as e:
+                # Skip lines with encoding issues
                 pdf.cell(0, 5, txt="[Line encoding error]", ln=True)
 
         pdf.output(output_pdf)
