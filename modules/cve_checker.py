@@ -7,8 +7,9 @@ from rich.console import Console
 from rich.table import Table
 from modules.utils import append_section, log
 
-# Load API key from environment variable
+# Constants
 NVD_API_KEY = os.getenv('NVD_API_KEY', None)
+SUMMARY_MAX_LENGTH = 62  # Maximum length for summary display in tables
 
 def check_cve_nvd(service, version, log_file=None):
     """
@@ -185,8 +186,8 @@ def display_nvd_results(cves, service):
         
         # Truncate long summaries
         summary = cve['summary']
-        if len(summary) > 62:
-            summary = summary[:62] + "..."
+        if len(summary) > SUMMARY_MAX_LENGTH:
+            summary = summary[:SUMMARY_MAX_LENGTH] + "..."
         
         table.add_row(
             cve['id'],
@@ -282,9 +283,17 @@ def auto_cve_scan(services, report_path, log_file=None):
     
     # Generate summary report
     if all_cves:
-        critical = [c for c in all_cves if c.get('severity') == 'CRITICAL' or float(c.get('cvss', 0)) >= 9.0]
-        high = [c for c in all_cves if c.get('severity') == 'HIGH' or (7.0 <= float(c.get('cvss', 0)) < 9.0)]
-        medium = [c for c in all_cves if c.get('severity') == 'MEDIUM' or (4.0 <= float(c.get('cvss', 0)) < 7.0)]
+        # Helper function to safely convert CVSS to float
+        def safe_cvss_to_float(cve):
+            try:
+                cvss = cve.get('cvss', 0)
+                return float(cvss) if cvss != 'N/A' else 0
+            except (ValueError, TypeError):
+                return 0
+        
+        critical = [c for c in all_cves if c.get('severity') == 'CRITICAL' or safe_cvss_to_float(c) >= 9.0]
+        high = [c for c in all_cves if c.get('severity') == 'HIGH' or (7.0 <= safe_cvss_to_float(c) < 9.0)]
+        medium = [c for c in all_cves if c.get('severity') == 'MEDIUM' or (4.0 <= safe_cvss_to_float(c) < 7.0)]
         
         summary = f"""
 CVE VULNERABILITY SCAN SUMMARY:
