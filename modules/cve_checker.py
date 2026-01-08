@@ -40,10 +40,15 @@ def check_cve(service, version):
             try:
                 # Check if item is a dict or string
                 if isinstance(item, dict):
+                    # Try to get CVSS score, fallback to cvss2, then N/A
+                    cvss_score = item.get('cvss')
+                    if cvss_score is None:
+                        cvss_score = item.get('cvss2', 'N/A')
+                    
                     cve_info = {
                         'id': item.get('id', 'Unknown'),
                         'summary': item.get('summary', 'No description'),
-                        'cvss': item.get('cvss', item.get('cvss2', 'N/A')),
+                        'cvss': cvss_score,
                         'published': item.get('Published', item.get('published', 'Unknown'))
                     }
                     cves.append(cve_info)
