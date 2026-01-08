@@ -1,5 +1,0 @@
-
-======================================================================
-[ NMAP DETAILED SCAN ]
-======================================================================
-[!] Nenhuma porta TCP aberta encontrada no Quick Scan. A correr full detailed scan (-sV -sC -p-).
