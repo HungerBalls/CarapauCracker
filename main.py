@@ -1,6 +1,6 @@
 # main.py — CarapauCracker v2
 
-from modules.utils import banner, make_run_dir, is_alive, log
+from modules.utils import banner, make_run_dir, is_alive, log, validate_dependencies
 from modules.report import export_pdf, export_json
 from menus.menu_recon import run_recon_menu
 from menus.menu_scan import run_scan_menu
@@ -15,67 +15,90 @@ init(autoreset=True)
 
 
 def main():
-    banner()
-    print(Fore.CYAN + " [*] Bem-vindo à " + Fore.YELLOW + "CarapauCracker" + Fore.CYAN +
-          " – onde pescamos vulnerabilidades com estilo ⚓🐟\n")
+    """Main entry point for CarapauCracker"""
+    try:
+        banner()
+        print(Fore.CYAN + " [*] Welcome to " + Fore.YELLOW + "CarapauCracker" + Fore.CYAN +
+              " – where we fish for vulnerabilities with style ⚓🐟\n")
 
-    # ─────────── Alvo ───────────
-    target = input(Fore.YELLOW + "[🎯] Introduz o IP ou hostname do alvo: ").strip()
-    if not target:
-        print(Fore.RED + "[✘] Alvo inválido. Tenta outra vez.")
-        return
+        # Validate all required tools before proceeding
+        validate_dependencies()
 
-    if not is_alive(target):
-        print(Fore.YELLOW + "[⚠] O alvo pode não estar online ou a responder a ping.")
-        cont = input(Fore.YELLOW + "    Continuar mesmo assim? (s/N): ").lower()
-        if cont != 's':
+        # ─────────── Target ───────────
+        target = input(Fore.YELLOW + "[🎯] Enter target IP or hostname: ").strip()
+        if not target:
+            print(Fore.RED + "[✘] Invalid target. Try again.")
             return
 
-    run_dir = make_run_dir(target)
-    report_path = run_dir / "report.txt"
-    session_log = run_dir / "session.log"
+        if not is_alive(target):
+            print(Fore.YELLOW + "[⚠] Target may not be online or responding to ping.")
+            cont = input(Fore.YELLOW + "    Continue anyway? (y/N): ").lower()
+            if cont != 'y':
+                return
 
-    log(f"\n=== Início da sessão CarapauCracker para {target} ===", session_log)
+        run_dir = make_run_dir(target)
+        report_path = run_dir / "report.txt"
+        session_log = run_dir / "session.log"
 
-    # ─────────── Menu Principal ───────────
-    while True:
-        banner()
-        print(Fore.CYAN + f"🎯 Alvo atual: " + Fore.WHITE + f"{target}\n")
-        print(Fore.CYAN + "╭────────────[ MENU PRINCIPAL - CARAPAUPANEL ]────────────╮")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- Reconhecimento Básico")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Scanning de Portas & Sistema")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- Enumeração Web Avançada")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- Exploração Automática (MSF + Searchsploit)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Ataques de Força Bruta (Hydra)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Exportar Relatório Final 📄")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Terminar Sessão ⛔")
-        print(Fore.CYAN + "╰──────────────────────────────────────────────────────────╯")
+        log(f"\n=== CarapauCracker session started for {target} ===", session_log)
 
-        choice = input(Fore.YELLOW + "\n[»] Escolhe o teu módulo: ").strip()
+        # ─────────── Main Menu ───────────
+        while True:
+            banner()
+            print(Fore.CYAN + f"🎯 Current target: " + Fore.WHITE + f"{target}\n")
+            print(Fore.CYAN + "╭────────────[ MAIN MENU - CARAPAUPANEL ]────────────╮")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- Basic Reconnaissance")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Port & System Scanning")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- Advanced Web Enumeration")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- Automated Exploitation (MSF + Searchsploit)")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Brute Force Attacks (Hydra)")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Export Final Report 📄")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Exit Session ⛔")
+            print(Fore.CYAN + "╰──────────────────────────────────────────────────────────╯")
 
-        if choice == "1":
-            run_recon_menu(target, run_dir, report_path, session_log)
-        elif choice == "2":
-            run_scan_menu(target, run_dir, report_path, session_log)
-        elif choice == "3":
-            run_web_enum_menu(target, run_dir, report_path, session_log)
-        elif choice == "4":
-            run_exploit_menu(target, run_dir, report_path, session_log)
-        elif choice == "5":
-            run_brute_menu(target, run_dir, report_path, session_log)
-        elif choice == "6":
-            export_pdf(report_path, run_dir / "report.pdf")
-            export_json(report_path, run_dir / "report.json")
-            print(Fore.GREEN + f"\n[✓] Relatórios gerados com sucesso!")
-            print(Fore.GREEN + f"    📄 PDF:  {run_dir / 'report.pdf'}")
-            print(Fore.GREEN + f"    📄 JSON: {run_dir / 'report.json'}")
-            log("[✓] Relatórios exportados com sucesso.", session_log)
-        elif choice == "0":
-            print(Fore.CYAN + "\n👋 Sessão terminada. Até à próxima pescaria, hacker.")
-            log("\n=== Sessão encerrada ===", session_log)
-            break
-        else:
-            print(Fore.RED + "[✘] Opção inválida. Tenta novamente.")
+            choice = input(Fore.YELLOW + "\n[»] Choose your module: ").strip()
+
+            try:
+                if choice == "1":
+                    run_recon_menu(target, run_dir, report_path, session_log)
+                elif choice == "2":
+                    run_scan_menu(target, run_dir, report_path, session_log)
+                elif choice == "3":
+                    run_web_enum_menu(target, run_dir, report_path, session_log)
+                elif choice == "4":
+                    run_exploit_menu(target, run_dir, report_path, session_log)
+                elif choice == "5":
+                    run_brute_menu(target, run_dir, report_path, session_log)
+                elif choice == "6":
+                    export_pdf(report_path, run_dir / "report.pdf")
+                    export_json(report_path, run_dir / "report.json")
+                    print(Fore.GREEN + f"\n[✓] Reports generated successfully!")
+                    print(Fore.GREEN + f"    📄 PDF:  {run_dir / 'report.pdf'}")
+                    print(Fore.GREEN + f"    📄 JSON: {run_dir / 'report.json'}")
+                    log("[✓] Reports exported successfully.", session_log)
+                elif choice == "0":
+                    print(Fore.CYAN + "\n👋 Session terminated. Until next time, hacker.")
+                    log("\n=== Session closed ===", session_log)
+                    break
+                else:
+                    print(Fore.RED + "[✘] Invalid option. Try again.")
+            except KeyboardInterrupt:
+                print(Fore.YELLOW + "\n\n[⚠] Operation interrupted by user.")
+                cont = input(Fore.YELLOW + "Return to main menu? (Y/n): ").lower()
+                if cont == 'n':
+                    print(Fore.CYAN + "\n👋 Session terminated. Until next time, hacker.")
+                    log("\n=== Session closed (interrupted by user) ===", session_log)
+                    break
+            except Exception as e:
+                print(Fore.RED + f"[✘] Unexpected error in menu: {e}")
+                log(f"[✘] Error in main menu: {e}", session_log)
+
+    except KeyboardInterrupt:
+        print(Fore.YELLOW + "\n\n[⚠] Program interrupted by user. Exiting...")
+    except Exception as e:
+        print(Fore.RED + f"[✘] Fatal error: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()

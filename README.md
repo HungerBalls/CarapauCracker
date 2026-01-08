@@ -10,110 +10,110 @@
   \____/_/   \_\_| \_\/_/   \_\_| /_/   \_\___/ \____|_| \_\/_/   \_\____|_|\_\_____|_| \_\
 ```
 
-**Framework Modular de Penetration Testing em Python**
+**Modular Penetration Testing Framework in Python**
 
-*Automatização inteligente para testes de segurança em ambientes controlados* 🔒
+*Intelligent automation for security testing in controlled environments* 🔒
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue? logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green. svg)](LICENSE)
-[![Security](https://img.shields.io/badge/Security-Educational%20Only-red)](README.md#-aviso-legal)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Security](https://img.shields.io/badge/Security-Educational%20Only-red)](README.md#-legal-disclaimer)
 
-[Características](#-características-principais) •
-[Instalação](#-instalação) •
-[Utilização](#-utilização) •
-[Módulos](#-módulos-disponíveis) •
-[Documentação](#-estrutura-do-projeto) •
-[Avisos Legais](#-aviso-legal)
+[Features](#-key-features) •
+[Installation](#-installation) •
+[Usage](#-usage) •
+[Modules](#-available-modules) •
+[Documentation](#-project-structure) •
+[Legal Notice](#-legal-disclaimer)
 
 </div>
 
 ---
 
-## 📋 Sobre o Projeto
+## 📋 About the Project
 
-**CarapauCracker** é uma framework modular de pentesting desenvolvida inteiramente em Python que automatiza e centraliza as fases críticas de um teste de penetração em ambientes controlados de laboratório. 
+**CarapauCracker** is a modular pentesting framework developed entirely in Python that automates and centralizes critical phases of penetration testing in controlled laboratory environments.
 
-Criada para profissionais de cibersegurança, investigadores e entusiastas de ethical hacking, esta ferramenta oferece uma interface CLI intuitiva que integra as ferramentas mais reconhecidas da indústria numa plataforma unificada.
+Created for cybersecurity professionals, researchers, and ethical hacking enthusiasts, this tool offers an intuitive CLI interface that integrates the industry's most recognized tools into a unified platform.
 
-### 🎯 Objetivos
+### 🎯 Objectives
 
-- ✅ **Automatização**:  Reduzir tarefas repetitivas durante pentests
-- ✅ **Centralização**: Unificar múltiplas ferramentas numa única interface
-- ✅ **Documentação**: Gerar relatórios profissionais automaticamente
-- ✅ **Modularidade**: Arquitetura extensível e fácil de manter
-- ✅ **Educação**: Ferramenta de aprendizagem para técnicas de pentesting
+- ✅ **Automation**: Reduce repetitive tasks during pentests
+- ✅ **Centralization**: Unify multiple tools in a single interface
+- ✅ **Documentation**: Automatically generate professional reports
+- ✅ **Modularity**: Extensible and easy-to-maintain architecture
+- ✅ **Education**: Learning tool for pentesting techniques
 
 ---
 
-## ✨ Características Principais
+## ✨ Key Features
 
-### 🔍 **1. Reconhecimento Avançado**
+### 🔍 **1. Advanced Reconnaissance**
 
-- ✓ Verificação de disponibilidade de host (ICMP ping)
-- ✓ Reverse DNS lookup automático
-- ✓ WHOIS integration para informação de registo
-- ✓ GeoIP localização via API externa
-- ✓ Banner grabbing multi-protocolo (FTP, SSH, HTTP)
+- ✓ Host availability verification (ICMP ping)
+- ✓ Automatic reverse DNS lookup
+- ✓ WHOIS integration for registration information
+- ✓ GeoIP location via external API
+- ✓ Multi-protocol banner grabbing (FTP, SSH, HTTP)
 
-### 🔎 **2. Scanning de Rede & Sistema**
+### 🔎 **2. Network & System Scanning**
 
-- **Quick Scan**: Identificação rápida de portas comuns
-- **Detailed Scan**: Detecção de versões e scripts NSE (`-sV -sC`)
-- **Full TCP Scan**: Análise completa de todas as 65535 portas
-- **UDP Scan**: Scanning das 50 portas UDP mais comuns
-- **OS Detection**: Fingerprinting de sistema operativo
-- **Aggressive Scan**: Modo agressivo com todas as técnicas (`-A`)
+- **Quick Scan**: Rapid identification of common ports
+- **Detailed Scan**: Version detection and NSE scripts (`-sV -sC`)
+- **Full TCP Scan**: Complete analysis of all 65535 ports
+- **UDP Scan**: Scanning of the 50 most common UDP ports
+- **OS Detection**: Operating system fingerprinting
+- **Aggressive Scan**: Aggressive mode with all techniques (`-A`)
 
-### 🌐 **3. Enumeração Web Completa**
+### 🌐 **3. Complete Web Enumeration**
 
-| Ferramenta | Função |
+| Tool | Function |
 |------------|--------|
-| **HTTP Analysis** | Análise de headers e configurações |
-| **WhatWeb** | Identificação de tecnologias e frameworks |
-| **Nikto** | Scanning profundo de vulnerabilidades web |
-| **Gobuster** | Directory/file bruteforce eficiente |
-| **FFUF** | Fuzzing de alta performance |
-| **Nmap NSE** | Scripts HTTP especializados |
-| **SSLScan** | Análise detalhada de SSL/TLS |
-| **WPScan** | Scanning específico para WordPress |
+| **HTTP Analysis** | Header and configuration analysis |
+| **WhatWeb** | Technology and framework identification |
+| **Nikto** | Deep web vulnerability scanning |
+| **Gobuster** | Efficient directory/file brute-forcing |
+| **FFUF** | High-performance fuzzing |
+| **Nmap NSE** | Specialized HTTP scripts |
+| **SSLScan** | Detailed SSL/TLS analysis |
+| **WPScan** | WordPress-specific scanning |
 
-### 💣 **4. Descoberta de Exploits**
+### 💣 **4. Exploit Discovery**
 
-- 🔎 Integração com **SearchSploit** (Exploit-DB)
-- 🧰 Pesquisa automática no **Metasploit Framework**
-- 🎯 Classificação inteligente por severidade (RCE, Auth Bypass, LPE, DoS)
-- ⚡ Sistema de ranking de exploits por prioridade
-- 🚀 Lançamento automatizado de exploits MSF
+- 🔎 Integration with **SearchSploit** (Exploit-DB)
+- 🧰 Automatic search in **Metasploit Framework**
+- 🎯 Intelligent classification by severity (RCE, Auth Bypass, LPE, DoS)
+- ⚡ Exploit ranking system by priority
+- 🚀 Automated MSF exploit launching
 
-### 🔑 **5. Ataques de Credenciais (Hydra)**
+### 🔑 **5. Credential Attacks (Hydra)**
 
-- 🔓 SSH bruteforce
+- 🔓 SSH brute-force
 - 🔓 FTP authentication testing
 - 🔓 HTTP Basic Auth cracking
 - 🔓 HTTP POST form attacks
-- 📝 Suporte para wordlists customizadas
-- ⚡ Teste rápido de credenciais conhecidas/default
+- 📝 Support for custom wordlists
+- ⚡ Quick testing of known/default credentials
 
-### 📄 **6. Sistema de Relatórios**
+### 📄 **6. Reporting System**
 
-- 📝 Relatório TXT unificado e estruturado
-- 📄 Export automático para **PDF** profissional
-- 🗂️ Export para **JSON** com dados estruturados
-- 🕐 Logging detalhado com timestamps
-- 🗃️ Organização por sessões e alvos
+- 📝 Unified and structured TXT report
+- 📄 Automatic export to professional **PDF**
+- 🗂️ Export to **JSON** with structured data
+- 🕐 Detailed logging with timestamps
+- 🗃️ Organization by sessions and targets
 
 ---
 
-## 🛠️ Requisitos
+## 🛠️ Requirements
 
-### Sistema Operativo
+### Operating System
 
 - **Linux** (Kali Linux, Parrot OS, Ubuntu, Debian)
 - **Python 3.8+**
 
-### Ferramentas Externas
+### External Tools
 
-As seguintes ferramentas devem estar instaladas no sistema:
+The following tools must be installed on the system:
 
 ```bash
 # Core Tools
@@ -132,184 +132,183 @@ hydra
 curl, wget
 ```
 
-### Dependências Python
+### Python Dependencies
 
 ```bash
 colorama
 requests
-python-whois
 fpdf
 ```
 
 ---
 
-## 📦 Instalação
+## 📦 Installation
 
-### Método 1: Instalação Automática (Recomendado)
+### Method 1: Automatic Installation (Recommended)
 
 ```bash
-# 1. Clonar o repositório
+# 1. Clone the repository
 git clone https://github.com/HungerBalls/CarapauCracker.git
 cd CarapauCracker
 
-# 2. Executar o script de instalação
+# 2. Run the installation script
 chmod +x install.sh
 sudo ./install.sh
 
-# 3. Iniciar a framework
+# 3. Start the framework
 python3 main.py
 ```
 
-### Método 2: Instalação Manual
+### Method 2: Manual Installation
 
 ```bash
-# 1. Clonar o repositório
+# 1. Clone the repository
 git clone https://github.com/HungerBalls/CarapauCracker.git
 cd CarapauCracker
 
-# 2. Instalar dependências Python
+# 2. Install Python dependencies
 pip3 install -r requirements.txt
 
-# 3. Instalar ferramentas externas (exemplo para Debian/Ubuntu)
+# 3. Install external tools (example for Debian/Ubuntu)
 sudo apt update
 sudo apt install nmap nikto hydra gobuster ffuf whatweb wpscan \
                  metasploit-framework exploitdb sslscan masscan \
                  whois dnsutils curl wget -y
 
-# 4. Criar diretórios necessários
+# 4. Create necessary directories
 mkdir -p outputs wordlists
 
-# 5. Executar
+# 5. Run
 python3 main.py
 ```
 
 ---
 
-## 🚀 Utilização
+## 🚀 Usage
 
-### Início Rápido
+### Quick Start
 
 ```bash
 python3 main.py
 ```
 
-### Fluxo de Trabalho Típico
+### Typical Workflow
 
 ```
-1. Introduzir alvo (IP ou hostname)
-   └─> Verificação automática de conectividade
+1. Enter target (IP or hostname)
+   └─> Automatic connectivity check
 
-2. Menu Principal - Escolher módulo: 
-   ├─> 1. Reconhecimento Básico
+2. Main Menu - Choose module: 
+   ├─> 1. Basic Reconnaissance
    │   └─> WHOIS, GeoIP, DNS, Banner Grabbing
    │
-   ├─> 2. Scanning de Portas
+   ├─> 2. Port Scanning
    │   └─> Quick/Detailed/Full TCP/UDP/OS Detection
    │
-   ├─> 3. Enumeração Web
+   ├─> 3. Web Enumeration
    │   └─> Headers, WhatWeb, Nikto, Gobuster, FFUF
    │
-   ├─> 4. Exploração
+   ├─> 4. Exploitation
    │   └─> SearchSploit, Metasploit
    │
    ├─> 5. Brute Force
    │   └─> SSH, FTP, HTTP (Hydra)
    │
-   └─> 6. Exportar Relatório
+   └─> 6. Export Report
        └─> PDF, JSON, TXT
 
-3. Resultados salvos em:
+3. Results saved in:
    outputs/<target>/<timestamp>/
 ```
 
-### Exemplo de Sessão
+### Example Session
 
 ```bash
 $ python3 main.py
 
-[🎯] Introduz o IP ou hostname do alvo:  192.168.1.100
-[✔] Sessão criada em: outputs/192.168.1.100/20260108_143022
+[🎯] Enter target IP or hostname: 192.168.1.100
+[✔] Session created at: outputs/192.168.1.100/20260108_143022
 
-╭────────────[ MENU PRINCIPAL - CARAPAUPANEL ]────────────╮
-│ 1 - Reconhecimento Básico
-│ 2 - Scanning de Portas & Sistema
-│ 3 - Enumeração Web Avançada
-│ 4 - Exploração Automática (MSF + Searchsploit)
-│ 5 - Ataques de Força Bruta (Hydra)
-│ 6 - Exportar Relatório Final 📄
-│ 0 - Terminar Sessão ⛔
+╭────────────[ MAIN MENU - CARAPAUPANEL ]────────────╮
+│ 1 - Basic Reconnaissance
+│ 2 - Port & System Scanning
+│ 3 - Advanced Web Enumeration
+│ 4 - Automated Exploitation (MSF + Searchsploit)
+│ 5 - Brute Force Attacks (Hydra)
+│ 6 - Export Final Report 📄
+│ 0 - Exit Session ⛔
 ╰──────────────────────────────────────────────────────────╯
 
-[»] Escolhe o teu módulo:  1
+[»] Choose your module: 1
 ```
 
 ---
 
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ```
 CarapauCracker/
-├── main.py                 # Ponto de entrada principal
-├── install.sh              # Script de instalação automática
-├── requirements.txt        # Dependências Python
+├── main.py                 # Main entry point
+├── install.sh              # Automatic installation script
+├── requirements.txt        # Python dependencies
 │
-├── modules/                # Módulos funcionais
-│   ├── recon.py           # Reconhecimento (WHOIS, DNS, GeoIP)
+├── modules/                # Functional modules
+│   ├── recon.py           # Reconnaissance (WHOIS, DNS, GeoIP)
 │   ├── scan.py            # Port scanning (Nmap, Masscan)
-│   ├── web_enum.py        # Enumeração web (Nikto, Gobuster, FFUF)
+│   ├── web_enum.py        # Web enumeration (Nikto, Gobuster, FFUF)
 │   ├── exploit.py         # Exploit discovery (SearchSploit, MSF)
-│   ├── brute_force.py     # Ataques de credenciais (Hydra)
-│   ├── report.py          # Geração de relatórios (PDF, JSON)
-│   └── utils.py           # Utilitários (logging, execução, banner)
+│   ├── brute_force.py     # Credential attacks (Hydra)
+│   ├── report.py          # Report generation (PDF, JSON)
+│   └── utils.py           # Utilities (logging, execution, banner)
 │
-├── menus/                  # Menus interativos
+├── menus/                  # Interactive menus
 │   ├── menu_recon.py
 │   ├── menu_scan.py
 │   ├── menu_web_enum.py
 │   ├── menu_exploit.py
-│   └── menu_brute. py
+│   └── menu_brute.py
 │
-├── wordlists/              # Wordlists para fuzzing e bruteforce
+├── wordlists/              # Wordlists for fuzzing and brute-force
 │   ├── common.txt
 │   ├── users.txt
 │   └── rockyou.txt
 │
-└── outputs/                # Resultados de sessões
+└── outputs/                # Session results
     └── <target>/
         └── <timestamp>/
             ├── report.txt
-            ├── report. pdf
+            ├── report.pdf
             ├── report.json
-            └── session. log
+            └── session.log
 ```
 
 ---
 
-## 🔧 Módulos Disponíveis
+## 🔧 Available Modules
 
-### 1️⃣ Módulo de Reconhecimento (`modules/recon.py`)
+### 1️⃣ Reconnaissance Module (`modules/recon.py`)
 
 ```python
-# Funções principais
+# Main functions
 whois_lookup(target)      # WHOIS information
-geoip_lookup(target)      # Geolocalização IP
-reverse_dns(target)       # DNS reverso
+geoip_lookup(target)      # IP geolocation
+reverse_dns(target)       # Reverse DNS
 banner_grab(ip, port)     # Banner grabbing
-basic_recon(target)       # Reconhecimento completo
+basic_recon(target)       # Complete reconnaissance
 ```
 
-### 2️⃣ Módulo de Scanning (`modules/scan.py`)
+### 2️⃣ Scanning Module (`modules/scan.py`)
 
 ```python
-quick_scan(target)        # Top 1000 portas
+quick_scan(target)        # Top 1000 ports
 detailed_scan(target)     # Version detection + NSE
-full_tcp_scan(target)     # Todas as portas TCP
-udp_scan(target)          # Top 50 portas UDP
+full_tcp_scan(target)     # All TCP ports
+udp_scan(target)          # Top 50 UDP ports
 os_detection(target)      # OS fingerprinting
-aggressive_scan(target)   # Scan agressivo completo
+aggressive_scan(target)   # Complete aggressive scan
 ```
 
-### 3️⃣ Módulo Web (`modules/web_enum.py`)
+### 3️⃣ Web Module (`modules/web_enum.py`)
 
 ```python
 http_headers(target, port)
@@ -321,7 +320,7 @@ sslscan(target, port)
 wpscan_scan(target, port)
 ```
 
-### 4️⃣ Módulo de Exploits (`modules/exploit.py`)
+### 4️⃣ Exploit Module (`modules/exploit.py`)
 
 ```python
 searchsploit_search(service, version)
@@ -330,7 +329,7 @@ rank_exploits(exploits)
 launch_msf_exploit(module, target, port)
 ```
 
-### 5️⃣ Módulo de Brute Force (`modules/brute_force.py`)
+### 5️⃣ Brute Force Module (`modules/brute_force.py`)
 
 ```python
 brute_ssh(target, userlist, passlist)
@@ -341,9 +340,9 @@ brute_http_post(target, port, path, userlist, passlist)
 
 ---
 
-## 📊 Relatórios
+## 📊 Reports
 
-### Formato TXT
+### TXT Format
 
 ```
 ================== CARAPAUPANEL FINAL REPORT ==================
@@ -362,22 +361,22 @@ PORT     STATE SERVICE    VERSION
 ... 
 ```
 
-### Formato PDF
+### PDF Format
 
-- Header profissional com logo
-- Secções organizadas
-- Tabelas formatadas
-- Timestamps e metadata
+- Professional header with logo
+- Organized sections
+- Formatted tables
+- Timestamps and metadata
 
-### Formato JSON
+### JSON Format
 
 ```json
 {
-  "target":  "192.168.1.100",
+  "target": "192.168.1.100",
   "timestamp": "2026-01-08T14:30:22",
   "sections": {
     "whois": { ... },
-    "nmap":  { ... },
+    "nmap": { ... },
     "exploits": [ ... ]
   }
 }
@@ -385,80 +384,80 @@ PORT     STATE SERVICE    VERSION
 
 ---
 
-## ⚠️ AVISO LEGAL
+## ⚠️ LEGAL DISCLAIMER
 
-> **APENAS PARA FINS EDUCACIONAIS E TESTES AUTORIZADOS**
+> **FOR EDUCATIONAL AND AUTHORIZED TESTING PURPOSES ONLY**
 
 ```
-⚖️ TERMOS DE USO E RESPONSABILIDADE
+⚖️ TERMS OF USE AND RESPONSIBILITY
 
-Este software é fornecido "AS IS" exclusivamente para: 
-✓ Ambientes de laboratório controlados
-✓ Testes de penetração autorizados por escrito
-✓ Fins educacionais e de pesquisa
-✓ Auditorias de segurança legítimas
+This software is provided "AS IS" exclusively for: 
+✓ Controlled laboratory environments
+✓ Penetration tests authorized in writing
+✓ Educational and research purposes
+✓ Legitimate security audits
 
-❌ UTILIZAÇÃO ILEGAL PROIBIDA: 
-- Testes em sistemas sem autorização explícita
-- Ataques a infraestruturas de terceiros
-- Qualquer atividade que viole leis locais/internacionais
+❌ ILLEGAL USE PROHIBITED: 
+- Testing systems without explicit authorization
+- Attacks on third-party infrastructure
+- Any activity that violates local/international laws
 
-O autor NÃO se responsabiliza por:
-- Uso indevido ou ilegal desta ferramenta
-- Danos causados a sistemas ou redes
-- Consequências legais de ações não autorizadas
+The author is NOT responsible for:
+- Misuse or illegal use of this tool
+- Damage caused to systems or networks
+- Legal consequences of unauthorized actions
 
-Ao utilizar este software, você concorda em: 
-1. Obter autorização escrita antes de qualquer teste
-2. Respeitar todas as leis aplicáveis
-3. Assumir total responsabilidade pelas suas ações
+By using this software, you agree to: 
+1. Obtain written authorization before any test
+2. Respect all applicable laws
+3. Take full responsibility for your actions
 
 🔒 "With great power comes great responsibility"
 ```
 
 ---
 
-## 🤝 Contribuições
+## 🤝 Contributions
 
-Contribuições são bem-vindas! Para contribuir:
+Contributions are welcome! To contribute:
 
-1. Fork o projeto
-2. Cria uma branch para a tua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit as tuas alterações (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abre um Pull Request
+1. Fork the project
+2. Create a branch for your feature (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-### Ideias para Contribuição
+### Ideas for Contribution
 
-- 🆕 Novos módulos (e. g., WiFi testing, mobile security)
-- 🐛 Correção de bugs
-- 📚 Melhorias na documentação
-- 🎨 Interface gráfica (GUI)
-- 🔌 Integrações com outras ferramentas
-
----
-
-## 📜 Licença
-
-Este projeto está licenciado sob a **MIT License** - vê o ficheiro [LICENSE](LICENSE) para detalhes.
+- 🆕 New modules (e.g., WiFi testing, mobile security)
+- 🐛 Bug fixes
+- 📚 Documentation improvements
+- 🎨 Graphical interface (GUI)
+- 🔌 Integrations with other tools
 
 ---
 
-## 📞 Contacto & Suporte
+## 📜 License
 
-- **Autor**: HungerBalls
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📞 Contact & Support
+
+- **Author**: HungerBalls
 - **GitHub**: [@HungerBalls](https://github.com/HungerBalls)
-- **Projeto**: [CarapauCracker](https://github.com/HungerBalls/CarapauCracker)
+- **Project**: [CarapauCracker](https://github.com/HungerBalls/CarapauCracker)
 
-### Reportar Issues
+### Report Issues
 
-Encontraste um bug ou tens uma sugestão? [Abre uma issue](https://github.com/HungerBalls/CarapauCracker/issues)! 
+Found a bug or have a suggestion? [Open an issue](https://github.com/HungerBalls/CarapauCracker/issues)!
 
 ---
 
-## 🌟 Agradecimentos
+## 🌟 Acknowledgments
 
-Ferramentas e projetos que tornaram isto possível:
+Tools and projects that made this possible:
 
 - [Nmap](https://nmap.org/) - Network scanning
 - [Metasploit](https://www.metasploit.com/) - Exploitation framework
@@ -471,10 +470,10 @@ Ferramentas e projetos que tornaram isto possível:
 
 <div align="center">
 
-**🐟 CarapauCracker - Pescando vulnerabilidades com estilo ⚓**
+**🐟 CarapauCracker - Fishing for vulnerabilities with style ⚓**
 
 Made with ❤️ and 🐍 Python
 
-[⬆ Voltar ao topo](#-carapaucracker)
+[⬆ Back to top](#-carapaucracker)
 
 </div>

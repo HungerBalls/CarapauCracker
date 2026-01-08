@@ -6,20 +6,21 @@ from modules.utils import banner, log
 from colorama import Fore
 
 def run_scan_menu(target, run_dir, report_path, session_log):
+    """Scanning submenu for port and system scanning"""
     while True:
         banner()
         print(Fore.CYAN + "╭────────────[ SUBMENU: SCANNING - NMAP ]────────────╮")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- Quick Scan (portas abertas)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Scan Detalhado (-sV -sC)")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- Quick Scan (open ports)")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Detailed Scan (-sV -sC)")
         print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- Full TCP Scan (-p-)")
         print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- UDP Scan (Top 50)")
         print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- OS Detection (-O)")
         print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Aggressive Scan (-A)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 7 " + Fore.WHITE + "- Executar Scanning Completo 🚀")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Voltar")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 7 " + Fore.WHITE + "- Run Complete Scan 🚀")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Return")
         print(Fore.CYAN + "╰────────────────────────────────────────────────────╯")
 
-        opt = input(Fore.YELLOW + "\n[»] Escolhe a opção: ").strip()
+        opt = input(Fore.YELLOW + "\n[»] Choose option: ").strip()
 
         if opt == "0":
             banner()
@@ -40,6 +41,6 @@ def run_scan_menu(target, run_dir, report_path, session_log):
         elif opt == "7":
             full_scan_workflow(target, report_path, session_log)
         else:
-            log(Fore.RED + "[✘] Opção inválida. Tenta novamente.", session_log)
+            log(Fore.RED + "[✘] Invalid option. Try again.", session_log)
 
-        input(Fore.YELLOW + "\nPressiona ENTER para continuar...")
+        input(Fore.YELLOW + "\nPress ENTER to continue...")

@@ -8,7 +8,7 @@ DEFAULT_PASSWORDS = "wordlists/rockyou.txt"
 
 
 # ================================================================
-# ⚙️ FUNÇÃO BASE PARA HYDRA
+# ⚙️ BASE FUNCTION FOR HYDRA
 # ================================================================
 def run_hydra(
     service: str,
@@ -25,48 +25,60 @@ def run_hydra(
     log_file=None
 ) -> str:
     """
-    Função genérica para correr Hydra com output ao vivo e logging.
+    Generic function to run Hydra with live output and logging.
     """
-    cmd = ["hydra", "-t", str(threads), "-W", str(timeout), "-f"]
+    try:
+        cmd = ["hydra", "-t", str(threads), "-W", str(timeout), "-f"]
 
-    if username and password:
-        cmd += ["-l", username, "-p", password]
-    elif username:
-        cmd += ["-l", username, "-P", passlist]
-    elif password:
-        cmd += ["-L", userlist, "-p", password]
-    else:
-        cmd += ["-L", userlist, "-P", passlist]
+        if username and password:
+            cmd += ["-l", username, "-p", password]
+        elif username:
+            cmd += ["-l", username, "-P", passlist]
+        elif password:
+            cmd += ["-L", userlist, "-p", password]
+        else:
+            cmd += ["-L", userlist, "-P", passlist]
 
-    if extra_args:
-        cmd += extra_args
+        if extra_args:
+            cmd += extra_args
 
-    if port:
-        cmd.append(f"{service}://{target}:{port}")
-    else:
-        cmd.append(f"{service}://{target}")
+        if port:
+            cmd.append(f"{service}://{target}:{port}")
+        else:
+            cmd.append(f"{service}://{target}")
 
-    log(Fore.CYAN + f"\n[🔑] A correr Hydra contra {target} ({service})", log_file)
-    log(Fore.YELLOW + f"[→] Comando: {' '.join(cmd)}", log_file)
+        log(Fore.CYAN + f"\n[🔑] Running Hydra against {target} ({service})", log_file)
+        log(Fore.YELLOW + f"[→] Command: {' '.join(cmd)}", log_file)
 
-    output = run_command_live(cmd, log_file)
+        output = run_command_live(cmd, log_file)
 
-    append_section(report_path, f"Hydra Brute Force - {service.upper()}", output)
-    log(Fore.GREEN + f"[✔] Ataque Hydra terminado ({service}).\n", log_file)
+        if output:
+            append_section(report_path, f"Hydra Brute Force - {service.upper()}", output)
+        
+        log(Fore.GREEN + f"[✔] Hydra attack finished ({service}).\n", log_file)
 
-    return output
+        return output
+    
+    except FileNotFoundError:
+        error_msg = "Hydra not found. Install with: sudo apt install hydra"
+        log(Fore.RED + f"[✘] {error_msg}", log_file)
+        return ""
+    except Exception as e:
+        error_msg = f"Error running Hydra: {str(e)}"
+        log(Fore.RED + f"[✘] {error_msg}", log_file)
+        return ""
 
 
 # ================================================================
-# 🔹 ATAQUES ESPECÍFICOS
+# 🔹 SPECIFIC ATTACKS
 # ================================================================
 def brute_ftp(ip: str, report_path, log_file=None, **kwargs):
-    """Brute force FTP"""
+    """Brute force FTP service"""
     return run_hydra("ftp", ip, report_path=report_path, log_file=log_file, **kwargs)
 
 
 def brute_ssh(ip: str, report_path, log_file=None, **kwargs):
-    """Brute force SSH"""
+    """Brute force SSH service"""
     return run_hydra("ssh", ip, report_path=report_path, log_file=log_file, **kwargs)
 
 
@@ -82,19 +94,24 @@ def brute_http_post(
     **kwargs
 ):
     """
-    HTTP POST brute-force (login forms)
+    HTTP POST brute-force for login forms
     """
-    form = f"{path}:{username_field}=^USER^&{password_field}=^PASS^:F={fail_string}"
-    extra_args = [ip, "-s", str(port), "http-post-form", form]
-    return run_hydra(
-        "http-post-form",
-        ip,
-        port=port,
-        extra_args=extra_args,
-        report_path=report_path,
-        log_file=log_file,
-        **kwargs
-    )
+    try:
+        form = f"{path}:{username_field}=^USER^&{password_field}=^PASS^:F={fail_string}"
+        extra_args = [ip, "-s", str(port), "http-post-form", form]
+        return run_hydra(
+            "http-post-form",
+            ip,
+            port=port,
+            extra_args=extra_args,
+            report_path=report_path,
+            log_file=log_file,
+            **kwargs
+        )
+    except Exception as e:
+        error_msg = f"Error in HTTP POST brute force: {str(e)}"
+        log(Fore.RED + f"[✘] {error_msg}", log_file)
+        return ""
 
 
 def brute_http_basic(
@@ -107,14 +124,19 @@ def brute_http_basic(
     """
     HTTP Basic Authentication brute-force
     """
-    return run_hydra(
-        "http-get",
-        ip,
-        port=port,
-        report_path=report_path,
-        log_file=log_file,
-        **kwargs
-    )
+    try:
+        return run_hydra(
+            "http-get",
+            ip,
+            port=port,
+            report_path=report_path,
+            log_file=log_file,
+            **kwargs
+        )
+    except Exception as e:
+        error_msg = f"Error in HTTP Basic Auth brute force: {str(e)}"
+        log(Fore.RED + f"[✘] {error_msg}", log_file)
+        return ""
 
 
 def test_credentials(
@@ -127,30 +149,39 @@ def test_credentials(
     log_file=None
 ):
     """
-    Teste direto de credenciais conhecidas.
+    Direct test of known credentials.
     """
-    return run_hydra(
-        service=service,
-        target=ip,
-        port=port,
-        username=username,
-        password=password,
-        report_path=report_path,
-        log_file=log_file
-    )
+    try:
+        return run_hydra(
+            service=service,
+            target=ip,
+            port=port,
+            username=username,
+            password=password,
+            report_path=report_path,
+            log_file=log_file
+        )
+    except Exception as e:
+        error_msg = f"Error testing credentials: {str(e)}"
+        log(Fore.RED + f"[✘] {error_msg}", log_file)
+        return ""
 
 
 # ================================================================
-# 🚀 FLUXO AUTOMÁTICO (TUDO DE UMA VEZ)
+# 🚀 AUTOMATIC WORKFLOW (ALL AT ONCE)
 # ================================================================
 def full_bruteforce(ip: str, report_path, log_file=None):
     """
-    Executa ataques Hydra nos serviços comuns (FTP, SSH, HTTP).
+    Execute Hydra attacks on common services (FTP, SSH, HTTP).
     """
-    log(Fore.CYAN + f"\n[🚀] Iniciar brute force completo em {ip}", log_file)
+    try:
+        log(Fore.CYAN + f"\n[🚀] Starting full brute force on {ip}", log_file)
 
-    brute_ftp(ip, report_path, log_file)
-    brute_ssh(ip, report_path, log_file)
-    brute_http_basic(ip, 80, report_path, log_file)
+        brute_ftp(ip, report_path, log_file)
+        brute_ssh(ip, report_path, log_file)
+        brute_http_basic(ip, 80, report_path, log_file)
 
-    log(Fore.GREEN + f"[✔] Brute force completo terminado para {ip}\n", log_file)
+        log(Fore.GREEN + f"[✔] Full brute force completed for {ip}\n", log_file)
+    except Exception as e:
+        error_msg = f"Error in full brute force: {str(e)}"
+        log(Fore.RED + f"[✘] {error_msg}", log_file)
