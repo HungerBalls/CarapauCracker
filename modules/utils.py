@@ -22,8 +22,8 @@ def banner():
         os.system("clear" if os.name == "posix" else "cls")
         console = Console()
         
-        # Plain ASCII art without markup tags
-        banner_art = """
+        # Plain ASCII art without markup tags (using raw string to avoid escape sequence warnings)
+        banner_art = r"""
    ____    _    ____      _    ____   _   _   _  ____ ____      _    ____ _  _______ ____  
   / ___|  / \  |  _ \    / \  |  _ \ / \ | | | |/ ___|  _ \    / \  / ___| |/ / ____|  _ \ 
  | |     / _ \ | |_) |  / _ \ | |_) / _ \| | | | |   | |_) |  / _ \| |   | ' /|  _| | |_) |
