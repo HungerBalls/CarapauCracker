@@ -12,29 +12,30 @@ from colorama import Fore
 DEFAULT_WORDLIST = "wordlists/common.txt"
 
 def run_web_enum_menu(target, run_dir, report_path, session_log):
+    """Advanced web enumeration submenu"""
     while True:
         banner()
-        print(Fore.CYAN + "╭────────────[ SUBMENU: ENUMERAÇÃO WEB AVANÇADA ]────────────╮")
+        print(Fore.CYAN + "╭────────────[ SUBMENU: ADVANCED WEB ENUMERATION ]────────────╮")
         print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- HTTP Headers")
         print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Robots.txt")
         print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- HTTP Methods")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- WhatWeb (detecção de tecnologias)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Nikto (vulnerabilidades)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Gobuster (diretórios)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 7 " + Fore.WHITE + "- FFUF (fuzzing rápido)")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- WhatWeb (technology detection)")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Nikto (vulnerabilities)")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Gobuster (directories)")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 7 " + Fore.WHITE + "- FFUF (fast fuzzing)")
         print(Fore.CYAN + "│" + Fore.GREEN + " 8 " + Fore.WHITE + "- Nmap HTTP Scripts")
         print(Fore.CYAN + "│" + Fore.GREEN + " 9 " + Fore.WHITE + "- SSLScan (443)")
         print(Fore.CYAN + "│" + Fore.GREEN + " 10 " + Fore.WHITE + "- WPScan (WordPress)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 11 " + Fore.WHITE + "- Enumeração Web Completa 🚀")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Voltar")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 11 " + Fore.WHITE + "- Complete Web Enumeration 🚀")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Return")
         print(Fore.CYAN + "╰─────────────────────────────────────────────────────────────╯")
 
-        opt = input(Fore.YELLOW + "\n[»] Escolhe uma opção: ").strip()
+        opt = input(Fore.YELLOW + "\n[»] Choose an option: ").strip()
         if opt == "0":
             banner()
             break
 
-        port = input(Fore.YELLOW + "[?] Porta (default 80): ").strip() or "80"
+        port = input(Fore.YELLOW + "[?] Port (default 80): ").strip() or "80"
         port = int(port)
         wordlist = input(Fore.YELLOW + f"[?] Wordlist (default {DEFAULT_WORDLIST}): ").strip() or DEFAULT_WORDLIST
 
@@ -50,6 +51,6 @@ def run_web_enum_menu(target, run_dir, report_path, session_log):
             case "9": sslscan(target, 443, report_path, session_log)
             case "10": wpscan_scan(target, port, report_path, session_log)
             case "11": full_web_enum(target, port, wordlist, report_path, session_log)
-            case _: log(Fore.RED + "[✘] Opção inválida. Tenta novamente.", session_log)
+            case _: log(Fore.RED + "[✘] Invalid option. Try again.", session_log)
 
-        input(Fore.YELLOW + "\nPressiona ENTER para continuar...")
+        input(Fore.YELLOW + "\nPress ENTER to continue...")
