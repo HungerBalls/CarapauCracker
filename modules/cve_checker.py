@@ -38,19 +38,14 @@ def check_cve_nvd(service, version):
     
     # Add API key if available
     headers = {}
-    delay = 6  # seconds between requests (without key)
     
     if NVD_API_KEY:
         headers['apiKey'] = NVD_API_KEY
-        delay = 0.6  # With key: 50 req/30s = ~0.6s delay
         console.print("[dim][i] Using NVD API key (faster rate limit)[/i][/dim]")
     else:
         console.print("[dim yellow][i] No API key - using rate limit 5 req/30s[/i][/dim yellow]")
     
     try:
-        # Rate limiting
-        time.sleep(delay)
-        
         response = requests.get(url, params=params, headers=headers, timeout=20)
         
         # Handle rate limiting
@@ -136,6 +131,11 @@ def check_cve_nvd(service, version):
         # Display results
         if cves:
             display_nvd_results(cves, service)
+        
+        # Rate limiting - delay after request
+        # Without key: 5 req/30s = 6s delay, With key: 50 req/30s = 0.6s delay
+        delay = 0.6 if NVD_API_KEY else 6
+        time.sleep(delay)
         
         return cves
         
@@ -259,11 +259,27 @@ def auto_cve_scan(services, report_path, log_file=None):
         else:
             console.print(f"[dim yellow][⚠] Skipping {service_name} - no version detected[/dim yellow]")
     
-    # Generate summary
+    # Generate summary - categorize by severity with mutually exclusive conditions
     if all_cves:
-        critical = [c for c in all_cves if c.get('severity') == 'CRITICAL' or safe_float_cvss(c.get('cvss')) >= 9.0]
-        high = [c for c in all_cves if c.get('severity') == 'HIGH' or (7.0 <= safe_float_cvss(c.get('cvss')) < 9.0)]
-        medium = [c for c in all_cves if c.get('severity') == 'MEDIUM' or (4.0 <= safe_float_cvss(c.get('cvss')) < 7.0)]
+        critical = []
+        high = []
+        medium = []
+        low = []
+        
+        for c in all_cves:
+            severity = c.get('severity', 'UNKNOWN')
+            score = safe_float_cvss(c.get('cvss'))
+            
+            # Prioritize explicit severity, fall back to CVSS score
+            if severity == 'CRITICAL' or score >= 9.0:
+                critical.append(c)
+            elif severity == 'HIGH' or score >= 7.0:
+                high.append(c)
+            elif severity == 'MEDIUM' or score >= 4.0:
+                medium.append(c)
+            elif severity == 'LOW' or score > 0:
+                low.append(c)
+            # else: unknown severity, counted in total but not in specific categories
         
         summary = f"""
 CVE VULNERABILITY SCAN SUMMARY:
