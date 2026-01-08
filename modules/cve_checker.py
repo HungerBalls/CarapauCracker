@@ -19,28 +19,63 @@ def check_cve(service, version):
     
     try:
         response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            
-            if not data:
-                console.print("[green][✓] No known CVEs found![/green]")
-                return []
-            
-            cves = []
-            for cve in data:
-                cve_info = {
-                    'id': cve.get('id'),
-                    'summary': cve.get('summary', ''),
-                    'cvss': cve.get('cvss', 'N/A'),
-                    'published': cve.get('Published', 'Unknown')
-                }
-                cves.append(cve_info)
-            
+        
+        if response.status_code != 200:
+            console.print(f"[yellow][⚠] CVE API returned status {response.status_code}[/yellow]")
+            return []
+        
+        data = response.json()
+        
+        # Handle different response formats
+        if not data:
+            console.print("[green][✓] No known CVEs found![/green]")
+            return []
+        
+        if not isinstance(data, list):
+            console.print("[yellow][⚠] Unexpected API response format[/yellow]")
+            return []
+        
+        cves = []
+        for item in data:
+            try:
+                # Check if item is a dict or string
+                if isinstance(item, dict):
+                    # Try to get CVSS score, fallback to cvss2, then N/A
+                    cvss_score = item.get('cvss')
+                    if cvss_score is None:
+                        cvss_score = item.get('cvss2', 'N/A')
+                    
+                    cve_info = {
+                        'id': item.get('id', 'Unknown'),
+                        'summary': item.get('summary', 'No description'),
+                        'cvss': cvss_score,
+                        'published': item.get('Published', item.get('published', 'Unknown'))
+                    }
+                    cves.append(cve_info)
+                elif isinstance(item, str):
+                    # If API returns just CVE IDs as strings
+                    cves.append({
+                        'id': item,
+                        'summary': 'Details not available',
+                        'cvss': 'N/A',
+                        'published': 'Unknown'
+                    })
+            except Exception as e:
+                console.print(f"[dim red]Warning: Skipped malformed CVE entry: {e}[/dim red]")
+                continue
+        
+        if cves:
             display_cve_results(cves, service)
             return cves
+        else:
+            console.print("[green][✓] No valid CVE data found.[/green]")
+            return []
             
+    except requests.RequestException as e:
+        console.print(f"[red][✘] CVE API request failed: {e}[/red]")
+        return []
     except Exception as e:
-        console.print(f"[red][✘] CVE check failed: {e}[/red]")
+        console.print(f"[red][✘] CVE check failed: {type(e).__name__}: {str(e)}[/red]")
         return []
 
 
@@ -54,9 +89,19 @@ def display_cve_results(cves, service):
     table.add_column("Summary", style="white")
     
     for cve in cves:
-        severity = get_severity(cve['cvss'])
-        summary = cve['summary'][:80] + "..." if len(cve['summary']) > 80 else cve['summary']
-        table.add_row(cve['id'], str(cve['cvss']), severity, summary)
+        severity = get_severity(cve.get('cvss', 'N/A'))
+        summary = cve.get('summary', 'No description')
+        
+        # Truncate long summaries
+        if len(summary) > 80:
+            summary = summary[:77] + "..."
+        
+        table.add_row(
+            cve.get('id', 'Unknown'),
+            str(cve.get('cvss', 'N/A')),
+            severity,
+            summary
+        )
     
     console.print(table)
 
@@ -64,6 +109,10 @@ def display_cve_results(cves, service):
 def get_severity(cvss):
     """Convert CVSS score to severity level"""
     try:
+        # Handle string 'N/A' or other non-numeric values
+        if cvss == 'N/A' or cvss is None:
+            return "⚪ UNKNOWN"
+        
         score = float(cvss)
         if score >= 9.0:
             return "🔴 CRITICAL"
@@ -71,8 +120,10 @@ def get_severity(cvss):
             return "🟠 HIGH"
         elif score >= 4.0:
             return "🟡 MEDIUM"
-        else:
+        elif score > 0:
             return "🟢 LOW"
+        else:
+            return "⚪ UNKNOWN"
     except (ValueError, TypeError):
         return "⚪ UNKNOWN"
 
