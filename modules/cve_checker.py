@@ -182,6 +182,7 @@ def extract_cvss_metrics(metrics):
         cvss_data = metrics['cvssMetricV2'][0].get('cvssData', {})
         cvss_score = cvss_data.get('baseScore', 'N/A')
         # Calculate severity for v2 (doesn't have baseSeverity)
+        # CVSS v2: HIGH (7.0-10.0), MEDIUM (4.0-6.9), LOW (0.0-3.9)
         try:
             score = float(cvss_score)
             if score >= 7.0:
@@ -190,7 +191,7 @@ def extract_cvss_metrics(metrics):
                 severity = 'MEDIUM'
             else:
                 severity = 'LOW'
-        except:
+        except (ValueError, TypeError):
             severity = 'UNKNOWN'
     
     return cvss_score, severity
@@ -236,8 +237,18 @@ def display_cve_results(cves, service):
     console.print(table)
     console.print(f"\n[cyan][✓] Found {len(cves)} CVE(s) in NVD database[/cyan]")
     
-    # Show critical vulnerabilities count
-    critical = sum(1 for c in cves if c['severity'] == 'CRITICAL' or (isinstance(c['cvss'], (int, float)) and c['cvss'] >= 9.0))
+    # Show critical vulnerabilities count (CVSS v3.x only, as v2 doesn't have CRITICAL)
+    critical = 0
+    for c in cves:
+        if c['severity'] == 'CRITICAL':
+            critical += 1
+        elif c['cvss'] != 'N/A':
+            try:
+                if isinstance(c['cvss'], (int, float)) and c['cvss'] >= 9.0:
+                    critical += 1
+            except (ValueError, TypeError):
+                pass
+    
     if critical > 0:
         console.print(f"[bold red][!] {critical} CRITICAL vulnerabilities found![/bold red]\n")
 
@@ -246,7 +257,7 @@ def get_severity_display(severity, cvss):
     """Convert severity to display format with emoji"""
     try:
         score = float(cvss) if cvss != 'N/A' else 0
-    except:
+    except (ValueError, TypeError):
         score = 0
     
     if severity == 'CRITICAL' or score >= 9.0:
