@@ -1,5 +1,6 @@
 # main.py — CarapauCracker v2
 
+from dotenv import load_dotenv
 from modules.utils import banner, make_run_dir, is_alive, log, validate_dependencies
 from modules.report import export_pdf, export_json
 from menus.menu_recon import run_recon_menu
@@ -12,6 +13,9 @@ from rich.panel import Panel
 from rich.console import Console
 from pathlib import Path
 import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 init(autoreset=True)
 
