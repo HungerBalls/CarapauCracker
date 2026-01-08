@@ -118,7 +118,7 @@ def check_cve_nvd(service, version):
                         severity = 'MEDIUM'
                     else:
                         severity = 'LOW'
-                except:
+                except (ValueError, TypeError):
                     severity = 'UNKNOWN'
             
             # Published date
@@ -195,7 +195,7 @@ def get_severity_display(severity, cvss):
     """Convert severity to display format with emoji"""
     try:
         score = float(cvss) if cvss != 'N/A' else 0
-    except:
+    except (ValueError, TypeError):
         score = 0
     
     if severity == 'CRITICAL' or score >= 9.0:
@@ -261,8 +261,6 @@ def display_cve_results(cves, service):
 
 def extract_version(version_string):
     """Extract version number from service banner"""
-    import re
-    
     if not version_string:
         return None
     
