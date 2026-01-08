@@ -73,7 +73,7 @@ def get_severity(cvss):
             return "🟡 MEDIUM"
         else:
             return "🟢 LOW"
-    except:
+    except (ValueError, TypeError):
         return "⚪ UNKNOWN"
 
 
@@ -89,9 +89,19 @@ def auto_cve_scan(services, report_path, log_file=None):
             cves = check_cve(service_name, version)
             all_cves.extend(cves)
     
-    # Generate summary
-    critical = [c for c in all_cves if float(c.get('cvss', 0)) >= 9.0]
-    high = [c for c in all_cves if 7.0 <= float(c.get('cvss', 0)) < 9.0]
+    # Generate summary - only count CVEs with numeric CVSS scores
+    critical = []
+    high = []
+    for c in all_cves:
+        try:
+            cvss_score = float(c.get('cvss', 0))
+            if cvss_score >= 9.0:
+                critical.append(c)
+            elif cvss_score >= 7.0:
+                high.append(c)
+        except (ValueError, TypeError):
+            # Skip CVEs with non-numeric CVSS scores
+            pass
     
     summary = f"""
 CVE SCAN SUMMARY:
@@ -105,6 +115,5 @@ CVE SCAN SUMMARY:
 
 def extract_version(version_string):
     """Extract version number from service banner"""
-    import re
     match = re.search(r'(\d+\.[\d.]+)', version_string)
     return match.group(1) if match else None
