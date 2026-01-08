@@ -74,7 +74,7 @@ def validate_dependencies():
     """
     required_tools = {
         'core': ['nmap', 'masscan', 'whois', 'dig'],
-        'web': ['nikto', 'gobuster', 'ffuf', 'whatweb', 'wpscan', 'sslscan'],
+        'web': ['nikto', 'gobuster', 'ffuf', 'whatweb', 'sslscan'],
         'exploitation': ['msfconsole', 'searchsploit'],
         'bruteforce': ['hydra'],
         'utilities': ['curl', 'wget']

@@ -75,7 +75,6 @@ Created for cybersecurity professionals, researchers, and ethical hacking enthus
 | **FFUF** | High-performance fuzzing |
 | **Nmap NSE** | Specialized HTTP scripts |
 | **SSLScan** | Detailed SSL/TLS analysis |
-| **WPScan** | WordPress-specific scanning |
 
 ### 💣 **4. Exploit Discovery**
 
@@ -120,7 +119,7 @@ The following tools must be installed on the system:
 nmap, masscan, whois, dig
 
 # Web Enumeration
-nikto, gobuster, ffuf, whatweb, wpscan, sslscan
+nikto, gobuster, ffuf, whatweb, sslscan
 
 # Exploitation
 metasploit-framework, searchsploit
@@ -171,7 +170,7 @@ pip3 install -r requirements.txt
 
 # 3. Install external tools (example for Debian/Ubuntu)
 sudo apt update
-sudo apt install nmap nikto hydra gobuster ffuf whatweb wpscan \
+sudo apt install nmap nikto hydra gobuster ffuf whatweb \
                  metasploit-framework exploitdb sslscan masscan \
                  whois dnsutils curl wget -y
 
@@ -317,7 +316,6 @@ nikto_scan(target, port)
 gobuster_dirs(target, port, wordlist)
 ffuf_dirfuzz(target, port, wordlist)
 sslscan(target, port)
-wpscan_scan(target, port)
 ```
 
 ### 4️⃣ Exploit Module (`modules/exploit.py`)

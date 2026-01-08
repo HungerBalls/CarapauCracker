@@ -85,10 +85,7 @@ def sslscan(ip: str, port: int, report_path, log_file=None):
     return run_web_tool(["sslscan", f"{ip}:{port}"], f"SSLScan ({ip}:{port})", report_path, log_file)
 
 
-def wpscan_scan(ip: str, port: int, report_path, log_file=None):
-    """WPScan for WordPress security scanning"""
-    url = f"http://{ip}:{port}"
-    return run_web_tool(["wpscan", "--url", url, "--no-update"], f"WPScan WordPress Scan ({url})", report_path, log_file)
+
 
 
 def nmap_http_enum(ip: str, port: int, report_path, log_file=None):

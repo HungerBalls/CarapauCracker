@@ -3,7 +3,7 @@
 from modules.web_enum import (
     http_headers, robots_txt, http_methods,
     whatweb_scan, nikto_scan, gobuster_dirs,
-    nmap_http_enum, wpscan_scan, sslscan,
+    nmap_http_enum, sslscan,
     ffuf_dirfuzz, full_web_enum
 )
 from modules.utils import banner, log
@@ -25,8 +25,7 @@ def run_web_enum_menu(target, run_dir, report_path, session_log):
         print(Fore.CYAN + "│" + Fore.GREEN + " 7 " + Fore.WHITE + "- FFUF (fast fuzzing)")
         print(Fore.CYAN + "│" + Fore.GREEN + " 8 " + Fore.WHITE + "- Nmap HTTP Scripts")
         print(Fore.CYAN + "│" + Fore.GREEN + " 9 " + Fore.WHITE + "- SSLScan (443)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 10 " + Fore.WHITE + "- WPScan (WordPress)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 11 " + Fore.WHITE + "- Complete Web Enumeration 🚀")
+        print(Fore.CYAN + "│" + Fore.GREEN + " 10 " + Fore.WHITE + "- Complete Web Enumeration 🚀")
         print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Return")
         print(Fore.CYAN + "╰─────────────────────────────────────────────────────────────╯")
 
@@ -49,8 +48,7 @@ def run_web_enum_menu(target, run_dir, report_path, session_log):
             case "7": ffuf_dirfuzz(target, port, wordlist, report_path, session_log)
             case "8": nmap_http_enum(target, port, report_path, session_log)
             case "9": sslscan(target, 443, report_path, session_log)
-            case "10": wpscan_scan(target, port, report_path, session_log)
-            case "11": full_web_enum(target, port, wordlist, report_path, session_log)
+            case "10": full_web_enum(target, port, wordlist, report_path, session_log)
             case _: log(Fore.RED + "[✘] Invalid option. Try again.", session_log)
 
         input(Fore.YELLOW + "\nPress ENTER to continue...")

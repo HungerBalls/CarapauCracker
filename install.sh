@@ -54,7 +54,7 @@ fi
 # 4️⃣ - Instalar ferramentas externas
 # ======================================================================
 TOOLS=(
-  nmap whois curl whatweb nikto gobuster ffuf sslscan wpscan hydra
+  nmap whois curl whatweb nikto gobuster ffuf sslscan hydra
   exploitdb metasploit-framework figlet lolcat jq
 )
 
