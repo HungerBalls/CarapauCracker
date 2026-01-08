@@ -79,10 +79,8 @@ Created for cybersecurity professionals, researchers, and ethical hacking enthus
 ### 💣 **4. Exploit Discovery**
 
 - 🔎 Integration with **SearchSploit** (Exploit-DB)
-- 🧰 Automatic search in **Metasploit Framework**
 - 🎯 Intelligent classification by severity (RCE, Auth Bypass, LPE, DoS)
 - ⚡ Exploit ranking system by priority
-- 🚀 Automated MSF exploit launching
 
 ### 🔑 **5. Credential Attacks (Hydra)**
 
@@ -122,7 +120,7 @@ nmap, masscan, whois, dig
 nikto, gobuster, ffuf, whatweb, sslscan
 
 # Exploitation
-metasploit-framework, searchsploit
+searchsploit
 
 # Brute Force
 hydra
@@ -171,7 +169,7 @@ pip3 install -r requirements.txt
 # 3. Install external tools (example for Debian/Ubuntu)
 sudo apt update
 sudo apt install nmap nikto hydra gobuster ffuf whatweb \
-                 metasploit-framework exploitdb sslscan masscan \
+                 exploitdb sslscan masscan \
                  whois dnsutils curl wget -y
 
 # 4. Create necessary directories
@@ -208,7 +206,7 @@ python3 main.py
    │   └─> Headers, WhatWeb, Nikto, Gobuster, FFUF
    │
    ├─> 4. Exploitation
-   │   └─> SearchSploit, Metasploit
+   │   └─> SearchSploit
    │
    ├─> 5. Brute Force
    │   └─> SSH, FTP, HTTP (Hydra)
@@ -232,7 +230,7 @@ $ python3 main.py
 │ 1 - Basic Reconnaissance
 │ 2 - Port & System Scanning
 │ 3 - Advanced Web Enumeration
-│ 4 - Automated Exploitation (MSF + Searchsploit)
+│ 4 - Automated Exploitation (Searchsploit)
 │ 5 - Brute Force Attacks (Hydra)
 │ 6 - Export Final Report 📄
 │ 0 - Exit Session ⛔
@@ -255,7 +253,7 @@ CarapauCracker/
 │   ├── recon.py           # Reconnaissance (WHOIS, DNS, GeoIP)
 │   ├── scan.py            # Port scanning (Nmap, Masscan)
 │   ├── web_enum.py        # Web enumeration (Nikto, Gobuster, FFUF)
-│   ├── exploit.py         # Exploit discovery (SearchSploit, MSF)
+│   ├── exploit.py         # Exploit discovery (SearchSploit)
 │   ├── brute_force.py     # Credential attacks (Hydra)
 │   ├── report.py          # Report generation (PDF, JSON)
 │   └── utils.py           # Utilities (logging, execution, banner)
@@ -322,9 +320,7 @@ sslscan(target, port)
 
 ```python
 searchsploit_search(service, version)
-msf_search(keyword)
 rank_exploits(exploits)
-launch_msf_exploit(module, target, port)
 ```
 
 ### 5️⃣ Brute Force Module (`modules/brute_force.py`)
@@ -458,11 +454,11 @@ Found a bug or have a suggestion? [Open an issue](https://github.com/HungerBalls
 Tools and projects that made this possible:
 
 - [Nmap](https://nmap.org/) - Network scanning
-- [Metasploit](https://www.metasploit.com/) - Exploitation framework
 - [Hydra](https://github.com/vanhauser-thc/thc-hydra) - Brute force attacks
 - [Gobuster](https://github.com/OJ/gobuster) - Directory brute forcing
 - [Nikto](https://cirt.net/Nikto2) - Web server scanning
 - [FFUF](https://github.com/ffuf/ffuf) - Web fuzzing
+- [SearchSploit](https://www.exploit-db.com/searchsploit) - Exploit database
 
 ---
 

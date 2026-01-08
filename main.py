@@ -50,7 +50,7 @@ def main():
             print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- Basic Reconnaissance")
             print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Port & System Scanning")
             print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- Advanced Web Enumeration")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- Automated Exploitation (MSF + Searchsploit)")
+            print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- Automated Exploitation (Searchsploit)")
             print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Brute Force Attacks (Hydra)")
             print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Export Final Report 📄")
             print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Exit Session ⛔")

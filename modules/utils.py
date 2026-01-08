@@ -75,7 +75,7 @@ def validate_dependencies():
     required_tools = {
         'core': ['nmap', 'masscan', 'whois', 'dig'],
         'web': ['nikto', 'gobuster', 'ffuf', 'whatweb', 'sslscan'],
-        'exploitation': ['msfconsole', 'searchsploit'],
+        'exploitation': ['searchsploit'],
         'bruteforce': ['hydra'],
         'utilities': ['curl', 'wget']
     }
@@ -99,7 +99,6 @@ def validate_dependencies():
         
         print(Fore.CYAN + "\n[i] Install missing tools and try again.")
         print(Fore.CYAN + "[i] On Debian/Ubuntu: sudo apt install <tool-name>")
-        print(Fore.CYAN + "[i] For Metasploit: sudo apt install metasploit-framework")
         print(Fore.CYAN + "[i] For SearchSploit: sudo apt install exploitdb")
         sys.exit(1)
     else:
