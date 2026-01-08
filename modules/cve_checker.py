@@ -113,7 +113,7 @@ def check_cve_nvd(service, version):
                         severity = 'MEDIUM'
                     else:
                         severity = 'LOW'
-                except:
+                except (ValueError, TypeError):
                     severity = 'UNKNOWN'
             
             # Get published date
@@ -190,7 +190,7 @@ def get_severity_display(severity, cvss):
     """Convert severity to display format with emoji"""
     try:
         score = float(cvss) if cvss != 'N/A' else 0
-    except:
+    except (ValueError, TypeError):
         score = 0
     
     if severity == 'CRITICAL' or score >= 9.0:
@@ -203,6 +203,16 @@ def get_severity_display(severity, cvss):
         return "🟢 LOW"
     else:
         return "⚪ UNKNOWN"
+
+
+def safe_float_cvss(cvss):
+    """Safely convert CVSS score to float, returning 0 for invalid values"""
+    try:
+        if cvss == 'N/A' or cvss is None:
+            return 0.0
+        return float(cvss)
+    except (ValueError, TypeError):
+        return 0.0
 
 
 def extract_version(version_string):
@@ -250,9 +260,9 @@ def auto_cve_scan(services, report_path, log_file=None):
     
     # Generate summary
     if all_cves:
-        critical = [c for c in all_cves if c.get('severity') == 'CRITICAL' or float(str(c.get('cvss', 0)).replace('N/A', '0')) >= 9.0]
-        high = [c for c in all_cves if c.get('severity') == 'HIGH' or (7.0 <= float(str(c.get('cvss', 0)).replace('N/A', '0')) < 9.0)]
-        medium = [c for c in all_cves if c.get('severity') == 'MEDIUM' or (4.0 <= float(str(c.get('cvss', 0)).replace('N/A', '0')) < 7.0)]
+        critical = [c for c in all_cves if c.get('severity') == 'CRITICAL' or safe_float_cvss(c.get('cvss')) >= 9.0]
+        high = [c for c in all_cves if c.get('severity') == 'HIGH' or (7.0 <= safe_float_cvss(c.get('cvss')) < 9.0)]
+        medium = [c for c in all_cves if c.get('severity') == 'MEDIUM' or (4.0 <= safe_float_cvss(c.get('cvss')) < 7.0)]
         
         summary = f"""
 CVE VULNERABILITY SCAN SUMMARY:
