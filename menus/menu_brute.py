@@ -6,6 +6,8 @@ from modules.brute_force import (
 )
 from modules.utils import banner, log
 from colorama import Fore
+from rich.panel import Panel
+from rich.console import Console
 
 
 DEFAULT_USERS = "wordlists/users.txt"
@@ -14,17 +16,21 @@ DEFAULT_PASSWORDS = "wordlists/rockyou.txt"
 
 def run_brute_menu(target, run_dir, report_path, session_log):
     """Brute force attacks submenu"""
+    console = Console()
+    
     while True:
         banner()
-        print(Fore.CYAN + "╭────────────[ SUBMENU: BRUTE FORCE - HYDRA ]────────────╮")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- FTP")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- SSH")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- HTTP Basic Auth")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- HTTP Form Login (POST)")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Test known credentials")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Run all 🚀")
-        print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Return")
-        print(Fore.CYAN + "╰────────────────────────────────────────────────────────╯")
+        console.print(Panel.fit(
+            "[cyan]1[/cyan] - FTP\n"
+            "[cyan]2[/cyan] - SSH\n"
+            "[cyan]3[/cyan] - HTTP Basic Auth\n"
+            "[cyan]4[/cyan] - HTTP Form Login (POST)\n"
+            "[cyan]5[/cyan] - Test known credentials\n"
+            "[cyan]6[/cyan] - Run all 🚀\n"
+            "[cyan]0[/cyan] - Return",
+            title="🔨 Brute Force Menu - Hydra",
+            border_style="cyan"
+        ))
 
         opt = input(Fore.YELLOW + "\n[»] Choose an option: ").strip()
 

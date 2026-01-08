@@ -2,6 +2,9 @@
 import re
 from modules.utils import run_command_live, append_section, log
 from colorama import Fore
+from rich.console import Console
+from rich.table import Table
+from rich.progress import Progress
 
 # ================================================================
 # 🔍 INTEGRATED AND VISUAL NMAP SCAN
@@ -34,6 +37,39 @@ def run_nmap(ip: str, args: list, title: str, report_path, log_file=None) -> str
 # ================================================================
 # 🔹 QUICK AND DETAILED SCANS
 # ================================================================
+
+def display_scan_results(services):
+    """Display scan results in a Rich table"""
+    console = Console()
+    table = Table(title="🔍 Port Scan Results", show_header=True, header_style="bold magenta")
+    table.add_column("Port", style="cyan", justify="center")
+    table.add_column("State", style="green")
+    table.add_column("Service", style="yellow")
+    table.add_column("Version", style="white")
+    
+    for svc in services:
+        table.add_row(f"{svc['port']}/tcp", "open", svc['service'], svc['version'])
+    
+    console.print(table)
+
+
+def extract_services_from_output(nmap_output):
+    """Extract services with port, service name and version from nmap output"""
+    services = []
+    try:
+        for line in nmap_output.splitlines():
+            match = re.match(r"^(\d+)/tcp\s+open\s+(\S+)\s*(.*)", line)
+            if match:
+                services.append({
+                    'port': match.group(1),
+                    'service': match.group(2),
+                    'version': match.group(3).strip()
+                })
+        return services
+    except Exception as e:
+        print(Fore.RED + f"[✘] Error extracting services: {e}")
+        return []
+
 
 def nmap_quick(ip: str, report_path, log_file=None) -> str:
     """Quick scan to discover open ports"""
@@ -69,7 +105,14 @@ def nmap_detailed(ip: str, ports: list, report_path, log_file=None) -> str:
             port_str = ",".join(ports)
             args = ["-sV", "-sC", "-p", port_str]
 
-        return run_nmap(ip, args, "Nmap Detailed Scan", report_path, log_file)
+        output = run_nmap(ip, args, "Nmap Detailed Scan", report_path, log_file)
+        
+        # Extract services and display in table
+        services = extract_services_from_output(output)
+        if services:
+            display_scan_results(services)
+        
+        return output
     except Exception as e:
         error_msg = f"Error in detailed scan: {str(e)}"
         log(Fore.RED + f"[✘] {error_msg}", log_file)
@@ -104,6 +147,38 @@ def nmap_all_formats(ip: str, output_path: str, report_path, log_file=None) -> s
 # ================================================================
 # 🔹 AUTOMATIC WORKFLOW — RUN ALL
 # ================================================================
+
+def full_scan_with_cve(ip: str, report_path, log_file=None):
+    """
+    Complete scanning workflow with CVE checking:
+    1. Quick Scan
+    2. Detailed Scan (-sV -sC)
+    3. CVE Vulnerability Check
+    """
+    try:
+        from modules.cve_checker import auto_cve_scan
+        
+        log(Fore.CYAN + f"\n[🚀] Starting complete scan with CVE check on {ip}", log_file)
+
+        quick = nmap_quick(ip, report_path, log_file)
+        open_ports = extract_open_tcp_ports(quick)
+
+        output = nmap_detailed(ip, open_ports, report_path, log_file)
+        
+        # Extract services and run CVE check
+        services = extract_services_from_output(output)
+        if services:
+            log(Fore.CYAN + "\n[🔍] Running CVE vulnerability check...", log_file)
+            cves = auto_cve_scan(services, report_path, log_file)
+            log(Fore.GREEN + f"[✔] CVE check completed. Found {len(cves)} vulnerabilities.\n", log_file)
+        
+        log(Fore.GREEN + f"[✔] Complete scanning finished for {ip}\n", log_file)
+        return open_ports
+    except Exception as e:
+        error_msg = f"Error in full scan with CVE: {str(e)}"
+        log(Fore.RED + f"[✘] {error_msg}", log_file)
+        return []
+
 
 def full_scan_workflow(ip: str, report_path, log_file=None):
     """

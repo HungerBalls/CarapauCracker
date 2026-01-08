@@ -8,6 +8,8 @@ from menus.menu_web_enum import run_web_enum_menu
 from menus.menu_exploit import run_exploit_menu
 from menus.menu_brute import run_brute_menu
 from colorama import Fore, init
+from rich.panel import Panel
+from rich.console import Console
 from pathlib import Path
 import os
 
@@ -16,10 +18,11 @@ init(autoreset=True)
 
 def main():
     """Main entry point for CarapauCracker"""
+    console = Console()
+    
     try:
         banner()
-        print(Fore.CYAN + " [*] Welcome to " + Fore.YELLOW + "CarapauCracker" + Fore.CYAN +
-              " – where we fish for vulnerabilities with style ⚓🐟\n")
+        console.print("[cyan][*] Welcome to [/cyan][yellow]CarapauCracker[/yellow][cyan] – where we fish for vulnerabilities with style ⚓🐟[/cyan]\n")
 
         # Validate all required tools before proceeding
         validate_dependencies()
@@ -45,16 +48,18 @@ def main():
         # ─────────── Main Menu ───────────
         while True:
             banner()
-            print(Fore.CYAN + f"🎯 Current target: " + Fore.WHITE + f"{target}\n")
-            print(Fore.CYAN + "╭────────────[ MAIN MENU - CARAPAUPANEL ]────────────╮")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 1 " + Fore.WHITE + "- Basic Reconnaissance")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 2 " + Fore.WHITE + "- Port & System Scanning")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 3 " + Fore.WHITE + "- Advanced Web Enumeration")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 4 " + Fore.WHITE + "- Automated Exploitation (Searchsploit)")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 5 " + Fore.WHITE + "- Brute Force Attacks (Hydra)")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 6 " + Fore.WHITE + "- Export Final Report 📄")
-            print(Fore.CYAN + "│" + Fore.GREEN + " 0 " + Fore.WHITE + "- Exit Session ⛔")
-            print(Fore.CYAN + "╰──────────────────────────────────────────────────────────╯")
+            console.print(f"[cyan]🎯 Current target: [/cyan][white]{target}[/white]\n")
+            console.print(Panel.fit(
+                "[cyan]1[/cyan] - Basic Reconnaissance\n"
+                "[cyan]2[/cyan] - Port & System Scanning\n"
+                "[cyan]3[/cyan] - Advanced Web Enumeration\n"
+                "[cyan]4[/cyan] - Automated Exploitation (Searchsploit)\n"
+                "[cyan]5[/cyan] - Brute Force Attacks (Hydra)\n"
+                "[cyan]6[/cyan] - Export Final Report 📄\n"
+                "[cyan]0[/cyan] - Exit Session ⛔",
+                title="🎯 MAIN MENU - CARAPAUPANEL",
+                border_style="cyan"
+            ))
 
             choice = input(Fore.YELLOW + "\n[»] Choose your module: ").strip()
 
@@ -72,12 +77,12 @@ def main():
                 elif choice == "6":
                     export_pdf(report_path, run_dir / "report.pdf")
                     export_json(report_path, run_dir / "report.json")
-                    print(Fore.GREEN + f"\n[✓] Reports generated successfully!")
-                    print(Fore.GREEN + f"    📄 PDF:  {run_dir / 'report.pdf'}")
-                    print(Fore.GREEN + f"    📄 JSON: {run_dir / 'report.json'}")
+                    console.print("\n[green][✓] Reports generated successfully![/green]")
+                    console.print(f"[green]    📄 PDF:  {run_dir / 'report.pdf'}[/green]")
+                    console.print(f"[green]    📄 JSON: {run_dir / 'report.json'}[/green]")
                     log("[✓] Reports exported successfully.", session_log)
                 elif choice == "0":
-                    print(Fore.CYAN + "\n👋 Session terminated. Until next time, hacker.")
+                    console.print("\n[cyan]👋 Session terminated. Until next time, hacker.[/cyan]")
                     log("\n=== Session closed ===", session_log)
                     break
                 else:
@@ -86,7 +91,7 @@ def main():
                 print(Fore.YELLOW + "\n\n[⚠] Operation interrupted by user.")
                 cont = input(Fore.YELLOW + "Return to main menu? (Y/n): ").lower()
                 if cont == 'n':
-                    print(Fore.CYAN + "\n👋 Session terminated. Until next time, hacker.")
+                    console.print("\n[cyan]👋 Session terminated. Until next time, hacker.[/cyan]")
                     log("\n=== Session closed (interrupted by user) ===", session_log)
                     break
             except Exception as e:

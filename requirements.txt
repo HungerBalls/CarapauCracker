@@ -1,4 +1,5 @@
 colorama
 reportlab
 requests
-fpdf  
+fpdf
+rich
