@@ -21,16 +21,20 @@ def banner():
     try:
         os.system("clear" if os.name == "posix" else "cls")
         console = Console()
-        console.print(Panel.fit(
-            "[bold cyan]   ____    _    ____      _    ____   _   _   _  ____ ____      _    ____ _  _______ ____  [/bold cyan]\n"
-            "[bold cyan]  / ___|  / \\  |  _ \\    / \\  |  _ \\ / \\ | | | |/ ___|  _ \\    / \\  / ___| |/ / ____|  _ \\ [/bold cyan]\n"
-            "[bold cyan] | |     / _ \\ | |_) |  / _ \\ | |_) / _ \\| | | | |   | |_) |  / _ \\| |   | ' /|  _| | |_) |[/bold cyan]\n"
-            "[bold cyan] | |___ / ___ \\|  _ <  / ___ \\|  __/ ___ \\ |_| | |___|  _ <  / ___ \\ |___| . \\| |___|  _ < [/bold cyan]\n"
-            "[bold cyan]  \\____/_/   \\_\\_| \\_\\/_/   \\_\\_| /_/   \\_\\___/ \\____|_| \\_\\/_/   \\_\\____|_|\\_\\_____|_| \\_\\[/bold cyan]\n\n"
-            "[yellow]         Advanced Pentesting Framework 🐟[/yellow]\n"
-            "[magenta]                  by HungerBalls  🎯  |  CarapauCracker v3[/magenta]",
-            border_style="cyan"
-        ))
+        
+        # Plain ASCII art without markup tags
+        banner_art = """
+   ____    _    ____      _    ____   _   _   _  ____ ____      _    ____ _  _______ ____  
+  / ___|  / \  |  _ \    / \  |  _ \ / \ | | | |/ ___|  _ \    / \  / ___| |/ / ____|  _ \ 
+ | |     / _ \ | |_) |  / _ \ | |_) / _ \| | | | |   | |_) |  / _ \| |   | ' /|  _| | |_) |
+ | |___ / ___ \|  _ <  / ___ \|  __/ ___ \ |_| | |___|  _ <  / ___ \ |___| . \| |___|  _ < 
+  \____/_/   \_\_| \_\/_/   \_\_| /_/   \_\___/ \____|_| \_\/_/   \_\____|_|\_\_____|_| \_\
+"""
+        
+        # Print plain art in cyan using style parameter
+        console.print(banner_art, style="bold cyan")
+        console.print("        [yellow]Advanced Pentesting Framework 🐟[/yellow]")
+        console.print("             [white]by HungerBalls[/white]  🎯  |  [cyan]CarapauCracker v3[/cyan]\n")
     except Exception as e:
         print(Fore.RED + f"[✘] Error displaying banner: {e}")
 
