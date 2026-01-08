@@ -6,6 +6,7 @@ import re
 from rich.console import Console
 from rich.table import Table
 from dotenv import load_dotenv
+from modules.utils import append_section, log
 
 # Load environment variables from .env file
 load_dotenv()
@@ -188,10 +189,7 @@ def display_nvd_results(cves, service):
 
 def get_severity_display(severity, cvss):
     """Convert severity to display format with emoji"""
-    try:
-        score = float(cvss) if cvss != 'N/A' else 0
-    except (ValueError, TypeError):
-        score = 0
+    score = safe_float_cvss(cvss)
     
     if severity == 'CRITICAL' or score >= 9.0:
         return "🔴 CRITICAL"
@@ -238,8 +236,6 @@ def extract_version(version_string):
 
 def auto_cve_scan(services, report_path, log_file=None):
     """Automatically check CVEs for all discovered services"""
-    from modules.utils import append_section, log
-    
     console = Console()
     console.print("\n[bold cyan]🔍 Running automatic CVE vulnerability check...[/bold cyan]\n")
     
@@ -249,10 +245,15 @@ def auto_cve_scan(services, report_path, log_file=None):
         service_name = svc.get('service', 'unknown')
         version_string = svc.get('version', '')
         
+        # Skip unknown services
+        if service_name == 'unknown':
+            console.print(f"[dim yellow][⚠] Skipping unknown service[/dim yellow]")
+            continue
+        
         # Extract version number
         version = extract_version(version_string)
         
-        if version and service_name != 'unknown':
+        if version:
             cves = check_cve_nvd(service_name, version)
             all_cves.extend(cves)
         else:
