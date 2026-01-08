@@ -55,7 +55,7 @@ fi
 # ======================================================================
 TOOLS=(
   nmap whois curl whatweb nikto gobuster ffuf sslscan hydra
-  exploitdb metasploit-framework figlet jq
+  exploitdb figlet jq
 )
 
 echo -e "${CYAN}[🧰] A instalar ferramentas de pentesting necessárias...${NC}"
