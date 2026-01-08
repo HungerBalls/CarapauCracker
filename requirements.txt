@@ -3,3 +3,4 @@ reportlab
 requests
 fpdf
 rich
+python-dotenv

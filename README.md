@@ -181,6 +181,22 @@ python3 main.py
 
 ---
 
+## 🔐 API Configuration
+
+CarapauCracker uses the NIST National Vulnerability Database (NVD) API for CVE checking.
+
+### Quick Setup:
+
+1. Get a free API key: https://nvd.nist.gov/developers/request-an-api-key
+2. Copy `.env.example` to `.env`
+3. Add your API key to `.env`
+
+See [docs/NVD_API_SETUP.md](docs/NVD_API_SETUP.md) for detailed instructions.
+
+**Note**: The tool works without an API key, but it's slower (5 requests/30s vs 50 requests/30s).
+
+---
+
 ## 🚀 Usage
 
 ### Quick Start

@@ -8,3 +8,15 @@ __pycache__/
 # Virtual environment
 .venv/
 
+# Output directory
+outputs/
+
+# Wordlists
+wordlists/
+
+# Environment variables (IMPORTANT: Never commit API keys!)
+.env
+*.key
+secrets/
+config.local.py
+
