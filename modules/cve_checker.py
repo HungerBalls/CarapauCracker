@@ -317,44 +317,8 @@ CVE SCAN SUMMARY:
     return all_cves
 
 
+# Backward compatibility - rename old function
+def check_cve(service, version):
+    """Wrapper for backward compatibility"""
+    return check_cve_nvd(service, version)
 
-def auto_cve_scan(services, report_path, log_file=None):
-    """Automatically check CVEs for all discovered services"""
-    all_cves = []
-    
-    for svc in services:
-        service_name = svc['service']
-        version = extract_version(svc.get('version', ''))
-        
-        if version:
-            cves = check_cve(service_name, version)
-            all_cves.extend(cves)
-    
-    # Generate summary - only count CVEs with numeric CVSS scores
-    critical = []
-    high = []
-    for c in all_cves:
-        try:
-            cvss_score = float(c.get('cvss', 0))
-            if cvss_score >= 9.0:
-                critical.append(c)
-            elif cvss_score >= 7.0:
-                high.append(c)
-        except (ValueError, TypeError):
-            # Skip CVEs with non-numeric CVSS scores
-            pass
-    
-    summary = f"""
-CVE SCAN SUMMARY:
-- Total CVEs Found: {len(all_cves)}
-- Critical: {len(critical)}
-- High: {len(high)}
-"""
-    append_section(report_path, "CVE Analysis", summary)
-    return all_cves
-
-
-def extract_version(version_string):
-    """Extract version number from service banner"""
-    match = re.search(r'(\d+\.[\d.]+)', version_string)
-    return match.group(1) if match else None
