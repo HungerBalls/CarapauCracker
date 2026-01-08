@@ -8,3 +8,12 @@ __pycache__/
 # Virtual environment
 .venv/
 
+# Environment variables
+.env
+.env.local
+*.key
+
+# Secrets
+secrets/
+config/secrets.py
+

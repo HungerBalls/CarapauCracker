@@ -91,7 +91,15 @@ Created for cybersecurity professionals, researchers, and ethical hacking enthus
 - 📝 Support for custom wordlists
 - ⚡ Quick testing of known/default credentials
 
-### 📄 **6. Reporting System**
+### 🔐 **6. CVE Vulnerability Checking**
+
+- 🔍 Automatic CVE lookup using **NIST NVD API 2.0**
+- 📊 CVSS scoring with severity indicators (Critical/High/Medium/Low)
+- 🎯 Service version detection and vulnerability matching
+- ⚡ Optional API key support for faster scanning
+- 📋 Rich formatted vulnerability reports
+
+### 📄 **7. Reporting System**
 
 - 📝 Unified and structured TXT report
 - 📄 Automatic export to professional **PDF**
@@ -178,6 +186,22 @@ mkdir -p outputs wordlists
 # 5. Run
 python3 main.py
 ```
+
+---
+
+## 🔐 CVE Vulnerability Checking
+
+CarapauCracker automatically checks discovered services against the NIST NVD database for known vulnerabilities.
+
+### Setup (Optional but Recommended)
+
+Get a free NVD API key for faster scanning:
+
+1. Request key: https://nvd.nist.gov/developers/request-an-api-key
+2. Copy `.env.example` to `.env`
+3. Add your key to `.env`
+
+See [CVE API Setup Guide](docs/CVE_API_SETUP.md) for details.
 
 ---
 
