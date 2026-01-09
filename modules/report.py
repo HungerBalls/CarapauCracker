@@ -39,8 +39,7 @@ def parse_report_sections(report_path):
         report_data = {}
         
         # Process pairs: title part and content part
-        i = 0
-        while i < len(parts) - 1:
+        for i in range(len(parts) - 1):
             # Get the title from current part
             title_part = parts[i]
             lines = [l.strip() for l in title_part.splitlines() if l.strip()]
@@ -60,8 +59,6 @@ def parse_report_sections(report_path):
                 # Verificar se a secção tem conteúdo relevante
                 if not is_section_empty(section_content):
                     report_data[title] = section_content
-            
-            i += 1
         
         return report_data
     

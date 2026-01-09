@@ -110,11 +110,14 @@ def main():
                     elif export_choice == "4":
                         # Mostrar estatísticas do report
                         try:
+                            from modules.report import parse_report_sections
                             stats = report_path.stat()
-                            sections_count = report_path.read_text().count("=" * 70) // 2
+                            sections = parse_report_sections(report_path)
+                            total_sections = report_path.read_text().count("=" * 70) // 2
                             console.print(f"\n[cyan]Report Statistics:[/cyan]")
                             console.print(f"  File: {report_path}")
-                            console.print(f"  Sections: ~{sections_count}")
+                            console.print(f"  Total sections: {total_sections}")
+                            console.print(f"  Sections with findings: {len(sections)}")
                             console.print(f"  Size: {stats.st_size} bytes")
                         except Exception as e:
                             console.print(f"[red][✘] Error reading stats: {e}[/red]")
