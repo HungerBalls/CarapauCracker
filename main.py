@@ -2,7 +2,7 @@
 
 from dotenv import load_dotenv
 from modules.utils import banner, make_run_dir, is_alive, log, validate_dependencies
-from modules.report import export_pdf, export_json
+from modules.report import export_pdf, export_json, export_summary
 from menus.menu_recon import run_recon_menu
 from menus.menu_scan import run_scan_menu
 from menus.menu_web_enum import run_web_enum_menu
@@ -79,12 +79,55 @@ def main():
                 elif choice == "5":
                     run_brute_menu(target, run_dir, report_path, session_log)
                 elif choice == "6":
-                    export_pdf(report_path, run_dir / "report.pdf")
-                    export_json(report_path, run_dir / "report.json")
-                    console.print("\n[green][✓] Reports generated successfully![/green]")
-                    console.print(f"[green]    📄 PDF:  {run_dir / 'report.pdf'}[/green]")
-                    console.print(f"[green]    📄 JSON: {run_dir / 'report.json'}[/green]")
-                    log("[✓] Reports exported successfully.", session_log)
+                    banner()
+                    console.print(Panel.fit(
+                        "[cyan]1[/cyan] - PDF Full Report (only findings)\n"
+                        "[cyan]2[/cyan] - JSON Structured Data (only findings)\n"
+                        "[cyan]3[/cyan] - Executive Summary (highlights)\n"
+                        "[cyan]4[/cyan] - View Report Stats\n"
+                        "[cyan]0[/cyan] - Cancel",
+                        title="📄 Export Options",
+                        border_style="cyan"
+                    ))
+                    
+                    export_choice = input(Fore.YELLOW + "\n[»] Choose format: ").strip()
+                    
+                    if export_choice == "1":
+                        pdf_file = run_dir / "report_filtered.pdf"
+                        if export_pdf(report_path, pdf_file):
+                            console.print(f"[green][✓] PDF saved to: {pdf_file}[/green]")
+                    
+                    elif export_choice == "2":
+                        json_file = run_dir / "report_filtered.json"
+                        if export_json(report_path, json_file):
+                            console.print(f"[green][✓] JSON saved to: {json_file}[/green]")
+                    
+                    elif export_choice == "3":
+                        summary_file = run_dir / "executive_summary.txt"
+                        if export_summary(report_path, summary_file):
+                            console.print(f"[green][✓] Summary saved to: {summary_file}[/green]")
+                    
+                    elif export_choice == "4":
+                        # Mostrar estatísticas do report
+                        try:
+                            from modules.report import parse_report_sections
+                            stats = report_path.stat()
+                            sections = parse_report_sections(report_path)
+                            total_sections = report_path.read_text().count("=" * 70) // 2
+                            console.print(f"\n[cyan]Report Statistics:[/cyan]")
+                            console.print(f"  File: {report_path}")
+                            console.print(f"  Total sections: {total_sections}")
+                            console.print(f"  Sections with findings: {len(sections)}")
+                            console.print(f"  Size: {stats.st_size} bytes")
+                        except Exception as e:
+                            console.print(f"[red][✘] Error reading stats: {e}[/red]")
+                    
+                    elif export_choice == "0":
+                        banner()
+                    else:
+                        console.print("[red][✘] Invalid option[/red]")
+                    
+                    input(Fore.YELLOW + "\nPress ENTER to continue...")
                 elif choice == "0":
                     console.print("\n[cyan]👋 Session terminated. Until next time, hacker.[/cyan]")
                     log("\n=== Session closed ===", session_log)
