@@ -74,7 +74,7 @@ apt install -y python3 python3-pip 2>&1 | grep -E "Setting up|Unpacking" | while
 done
 
 echo -e "${YELLOW}→ Upgrading pip...${NC}"
-pip install --upgrade pip --progress-bar on 2>&1
+pip install --upgrade pip --progress-bar on --break-system-packages 2>&1
 
 if [ -f "requirements.txt" ]; then
     echo -e "${YELLOW}→ Installing dependencies from requirements.txt...${NC}"
@@ -91,7 +91,7 @@ if [ -f "requirements.txt" ]; then
         show_progress $CURRENT $TOTAL_DEPS
         echo -ne " Installing ${package}.. .\r"
         
-        pip install "$package" --progress-bar off >/dev/null 2>&1
+        pip install "$package" --progress-bar off --break-system-packages >/dev/null 2>&1
     done < requirements.txt
     
     echo -e "\n${GREEN}[✔] Python dependencies installed. ${NC}\n"
