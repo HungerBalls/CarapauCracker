@@ -10,6 +10,37 @@ from modules.utils import append_section, log
 # Constants
 NVD_API_KEY = os.getenv('NVD_API_KEY', None)
 SUMMARY_MAX_LENGTH = 62  # Maximum length for summary display in tables
+REPORT_DESCRIPTION_MAX_LENGTH = 250  # Maximum length for descriptions in reports
+TABLE_DESCRIPTION_MAX_LENGTH = 60  # Maximum length for descriptions in tables
+
+# Severity ordering for sorting CVEs
+SEVERITY_ORDER = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3, 'UNKNOWN': 4}
+
+
+def sort_cves_by_severity(cves):
+    """
+    Sort CVEs by severity (CRITICAL first) and then by CVSS score (highest first)
+    
+    Args:
+        cves: List of CVE dictionaries
+    
+    Returns:
+        Sorted list of CVEs
+    """
+    def get_sort_key(cve):
+        severity = cve.get('severity', 'UNKNOWN')
+        severity_rank = SEVERITY_ORDER.get(severity, 999)
+        
+        # Get score, handling 'N/A' and other edge cases
+        score = cve.get('score', 0)
+        try:
+            numeric_score = float(score) if score != 'N/A' else 0
+        except (ValueError, TypeError):
+            numeric_score = 0
+        
+        return (severity_rank, -numeric_score)  # Negative score for descending order
+    
+    return sorted(cves, key=get_sort_key)
 
 def check_cve_nvd(service, version, log_file=None):
     """
@@ -369,8 +400,7 @@ def format_cve_report(cves, services):
     lines.append("")
     
     # CVEs ordenados por severidade (CRITICAL primeiro)
-    severity_order = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3, 'UNKNOWN': 4}
-    sorted_cves = sorted(cves, key=lambda x: (severity_order.get(x.get('severity', 'UNKNOWN'), 999), -float(x.get('score', 0)) if x.get('score') != 'N/A' else 0))
+    sorted_cves = sort_cves_by_severity(cves)
     
     for i, cve in enumerate(sorted_cves, 1):
         cve_id = cve.get('id', 'N/A')
@@ -391,8 +421,8 @@ def format_cve_report(cves, services):
         lines.append(f"    Severity:    {severity}")
         lines.append(f"    CVSS Score:  {score}")
         lines.append(f"    Published:   {published}")
-        # Limitar a 250 chars e adicionar ... apenas se necessário
-        desc_text = description[:250] + ('...' if len(description) > 250 else '')
+        # Limitar a REPORT_DESCRIPTION_MAX_LENGTH chars e adicionar ... apenas se necessário
+        desc_text = description[:REPORT_DESCRIPTION_MAX_LENGTH] + ('...' if len(description) > REPORT_DESCRIPTION_MAX_LENGTH else '')
         lines.append(f"    Description: {desc_text}")
         lines.append(f"    Reference:   https://nvd.nist.gov/vuln/detail/{cve_id}")
         lines.append("")
@@ -420,16 +450,15 @@ def create_cve_summary_table(cves):
     table.add_column("Score", justify="center")
     table.add_column("Description", style="white")
     
-    # Ordenar por severidade e score
-    severity_order = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3}
-    sorted_cves = sorted(cves, key=lambda x: (severity_order.get(x.get('severity', 'UNKNOWN'), 999), -float(x.get('score', 0)) if x.get('score') != 'N/A' else 0))
+    # Ordenar por severidade e score usando função helper
+    sorted_cves = sort_cves_by_severity(cves)
     
     for cve in sorted_cves[:10]:  # Mostrar apenas top 10 no terminal
         cve_id = cve.get('id', 'N/A')
         severity = cve.get('severity', 'UNKNOWN')
         score = str(cve.get('score', 'N/A'))
         desc_full = cve.get('description', 'N/A')
-        desc = desc_full[:60] + ('...' if len(desc_full) > 60 else '')
+        desc = desc_full[:TABLE_DESCRIPTION_MAX_LENGTH] + ('...' if len(desc_full) > TABLE_DESCRIPTION_MAX_LENGTH else '')
         
         # Cor por severidade
         severity_style = {
