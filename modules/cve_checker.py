@@ -10,6 +10,8 @@ from modules.utils import append_section, log
 # Constants
 NVD_API_KEY = os.getenv('NVD_API_KEY', None)
 SUMMARY_MAX_LENGTH = 62  # Maximum length for summary display in tables
+MAX_DESCRIPTION_LENGTH = 300  # Maximum length for description in reports
+MAX_TABLE_DESC_LENGTH = 50  # Maximum length for description in summary tables
 
 def check_cve_nvd(service, version, log_file=None):
     """
@@ -251,15 +253,15 @@ def extract_version(version_string):
 
 def check_service_vulnerabilities(services, report_path, log_file=None):
     """
-    Verifica CVEs para TODOS os serviços encontrados num scan
+    Check CVEs for ALL services found in a scan
     
     Args:
-        services: Lista de dicts [{'port': '22', 'service': 'ssh', 'version': 'OpenSSH 7.4'}, ...]
-        report_path: Caminho do report.txt
-        log_file: Ficheiro de log da sessão
+        services: List of dicts [{'port': '22', 'service': 'ssh', 'version': 'OpenSSH 7.4'}, ...]
+        report_path: Path to report.txt
+        log_file: Session log file
     
     Returns:
-        Lista de todos os CVEs encontrados
+        List of all CVEs found
     """
     console = Console()
     all_cves = []
@@ -329,14 +331,14 @@ def check_service_vulnerabilities(services, report_path, log_file=None):
 
 def format_cve_report(cves, services):
     """
-    Formata lista de CVEs para o report de forma profissional
+    Format CVE list for professional report output
     
     Args:
-        cves: Lista de CVEs encontrados
-        services: Lista de serviços analisados
+        cves: List of CVEs found
+        services: List of services analyzed
     
     Returns:
-        String formatada para adicionar ao report
+        Formatted string to add to report
     """
     lines = []
     
@@ -413,7 +415,7 @@ def format_cve_report(cves, services):
         lines.append(f"    CVSS Score:     {score}")
         lines.append(f"    Affected:       {affected_service} {affected_version} (port {affected_port})")
         lines.append(f"    Published:      {published}")
-        lines.append(f"    Description:    {description[:300]}...")  # Limitar descrição
+        lines.append(f"    Description:    {description[:MAX_DESCRIPTION_LENGTH]}...")  # Limit description
         lines.append(f"    Reference:      https://nvd.nist.gov/vuln/detail/{cve_id}")
         lines.append("")
         lines.append("-" * 70)
@@ -429,7 +431,7 @@ def format_cve_report(cves, services):
 
 def create_cve_summary_table(cves):
     """
-    Cria tabela Rich com resumo de CVEs para mostrar no terminal
+    Create Rich table with CVE summary for terminal display
     """
     console = Console()
     
@@ -448,7 +450,7 @@ def create_cve_summary_table(cves):
         score = str(cve.get('score', cve.get('cvss', 'N/A')))
         service = cve.get('affected_service', 'N/A')
         # Use 'summary' if 'description' not available
-        desc = cve.get('description', cve.get('summary', 'N/A'))[:50] + "..."
+        desc = cve.get('description', cve.get('summary', 'N/A'))[:MAX_TABLE_DESC_LENGTH] + "..."
         
         # Cor por severidade
         severity_style = {
