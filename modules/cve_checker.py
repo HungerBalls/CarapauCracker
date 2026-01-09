@@ -138,7 +138,9 @@ def check_cve_nvd(service, version, log_file=None):
             cve_info = {
                 'id': cve_id,
                 'summary': summary,
+                'description': summary,  # Add 'description' as alias for compatibility
                 'cvss': cvss_score,
+                'score': cvss_score,  # Add 'score' as alias for compatibility
                 'severity': severity,
                 'published': published
             }
@@ -245,6 +247,223 @@ def extract_version(version_string):
             return match.group(1)
     
     return None
+
+
+def check_service_vulnerabilities(services, report_path, log_file=None):
+    """
+    Verifica CVEs para TODOS os serviços encontrados num scan
+    
+    Args:
+        services: Lista de dicts [{'port': '22', 'service': 'ssh', 'version': 'OpenSSH 7.4'}, ...]
+        report_path: Caminho do report.txt
+        log_file: Ficheiro de log da sessão
+    
+    Returns:
+        Lista de todos os CVEs encontrados
+    """
+    console = Console()
+    all_cves = []
+    
+    console.print("\n[cyan]═══════════════════════════════════════[/cyan]")
+    console.print("[cyan bold]  🔍 CVE VULNERABILITY ANALYSIS[/cyan bold]")
+    console.print("[cyan]═══════════════════════════════════════[/cyan]\n")
+    
+    # Processar cada serviço
+    for svc in services:
+        service_name = svc.get('service', 'unknown')
+        version = svc.get('version', '')
+        port = svc.get('port', 'N/A')
+        
+        # Ignorar se não tiver versão
+        if not version or version == 'N/A' or len(version) < 3:
+            log(f"[i] Skipping {service_name} (no version info)", log_file)
+            continue
+        
+        console.print(f"[cyan][🔍] Analyzing {service_name} {version} (port {port})...[/cyan]")
+        
+        # Chamar função existente check_cve_nvd()
+        cves = check_cve_nvd(service_name, version, log_file)
+        
+        if cves:
+            # Adicionar info do serviço a cada CVE
+            for cve in cves:
+                cve['affected_service'] = service_name
+                cve['affected_version'] = version
+                cve['affected_port'] = port
+            
+            all_cves.extend(cves)
+            
+            # Contar por severidade
+            critical = [c for c in cves if c.get('severity') == 'CRITICAL']
+            high = [c for c in cves if c.get('severity') == 'HIGH']
+            medium = [c for c in cves if c.get('severity') == 'MEDIUM']
+            
+            # Alertas visuais em tempo real
+            if critical:
+                console.print(f"[red bold]  🔴 {len(critical)} CRITICAL CVEs found![/red bold]")
+            if high:
+                console.print(f"[yellow]  🟠 {len(high)} HIGH CVEs found[/yellow]")
+            if medium:
+                console.print(f"[white]  🟡 {len(medium)} MEDIUM CVEs found[/white]")
+        else:
+            console.print(f"[green]  ✓ No CVEs found for {service_name} {version}[/green]")
+        
+        console.print()  # Linha vazia
+    
+    # Adicionar ao report se encontrou CVEs
+    if all_cves:
+        console.print(f"[red bold]\n🚨 TOTAL: {len(all_cves)} vulnerabilities detected across all services![/red bold]\n")
+        
+        # Formatar e adicionar ao report
+        cve_report = format_cve_report(all_cves, services)
+        append_section(report_path, "CVE VULNERABILITIES", cve_report)
+        
+        log(f"[✓] CVE analysis complete: {len(all_cves)} vulnerabilities found", log_file)
+        log(f"[✓] CVE report added to {report_path}", log_file)
+    else:
+        console.print("[green][✓] No CVEs found in any service[/green]\n")
+        log("[i] CVE analysis complete: No vulnerabilities found", log_file)
+    
+    return all_cves
+
+
+def format_cve_report(cves, services):
+    """
+    Formata lista de CVEs para o report de forma profissional
+    
+    Args:
+        cves: Lista de CVEs encontrados
+        services: Lista de serviços analisados
+    
+    Returns:
+        String formatada para adicionar ao report
+    """
+    lines = []
+    
+    # Header
+    lines.append("╔═══════════════════════════════════════════════════════════════╗")
+    lines.append("║           VULNERABILITY ANALYSIS REPORT (NVD)                 ║")
+    lines.append("╚═══════════════════════════════════════════════════════════════╝")
+    lines.append("")
+    
+    # Estatísticas por severidade
+    critical = [c for c in cves if c.get('severity') == 'CRITICAL']
+    high = [c for c in cves if c.get('severity') == 'HIGH']
+    medium = [c for c in cves if c.get('severity') == 'MEDIUM']
+    low = [c for c in cves if c.get('severity') == 'LOW']
+    
+    lines.append(f"Total Vulnerabilities Found: {len(cves)}")
+    lines.append(f"  🔴 Critical: {len(critical)}")
+    lines.append(f"  🟠 High:      {len(high)}")
+    lines.append(f"  🟡 Medium:   {len(medium)}")
+    lines.append(f"  ⚪ Low:      {len(low)}")
+    lines.append("")
+    
+    # Serviços analisados
+    lines.append("Services Analyzed:")
+    for svc in services:
+        service_name = svc.get('service', 'unknown')
+        version = svc.get('version', 'N/A')
+        port = svc.get('port', 'N/A')
+        if version and version != 'N/A':
+            lines.append(f"  - {service_name} {version} (port {port})")
+    lines.append("")
+    lines.append("=" * 70)
+    lines.append("")
+    
+    # Ordenar CVEs por severidade (CRITICAL primeiro) e depois por score
+    severity_order = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3, 'UNKNOWN': 4}
+    
+    def get_cve_sort_key(cve):
+        severity = cve.get('severity', 'UNKNOWN')
+        severity_rank = severity_order.get(severity, 999)
+        # Get score, handle both 'cvss' and 'score' keys
+        score = cve.get('score', cve.get('cvss', 0))
+        try:
+            score_val = float(score) if score != 'N/A' else 0
+        except (ValueError, TypeError):
+            score_val = 0
+        return (severity_rank, -score_val)
+    
+    sorted_cves = sorted(cves, key=get_cve_sort_key)
+    
+    # Listar cada CVE
+    for i, cve in enumerate(sorted_cves, 1):
+        cve_id = cve.get('id', 'N/A')
+        severity = cve.get('severity', 'UNKNOWN')
+        # Handle both 'cvss' and 'score' keys
+        score = cve.get('score', cve.get('cvss', 'N/A'))
+        # Use 'summary' if 'description' not available (for compatibility)
+        description = cve.get('description', cve.get('summary', 'No description available'))
+        published = cve.get('published', 'N/A')
+        affected_service = cve.get('affected_service', 'N/A')
+        affected_version = cve.get('affected_version', 'N/A')
+        affected_port = cve.get('affected_port', 'N/A')
+        
+        # Emoji por severidade
+        emoji = {
+            'CRITICAL': '🔴',
+            'HIGH': '🟠',
+            'MEDIUM': '🟡',
+            'LOW': '⚪'
+        }.get(severity, '⚫')
+        
+        lines.append(f"{emoji} [{i}/{len(sorted_cves)}] {cve_id}")
+        lines.append(f"    Severity:       {severity}")
+        lines.append(f"    CVSS Score:     {score}")
+        lines.append(f"    Affected:       {affected_service} {affected_version} (port {affected_port})")
+        lines.append(f"    Published:      {published}")
+        lines.append(f"    Description:    {description[:300]}...")  # Limitar descrição
+        lines.append(f"    Reference:      https://nvd.nist.gov/vuln/detail/{cve_id}")
+        lines.append("")
+        lines.append("-" * 70)
+        lines.append("")
+    
+    # Footer com recomendação
+    lines.append("=" * 70)
+    lines.append("⚠️  RECOMMENDATION: Prioritize patching CRITICAL and HIGH severity CVEs")
+    lines.append("=" * 70)
+    
+    return "\n".join(lines)
+
+
+def create_cve_summary_table(cves):
+    """
+    Cria tabela Rich com resumo de CVEs para mostrar no terminal
+    """
+    console = Console()
+    
+    table = Table(title="🔍 CVE Summary (Top 10)", show_header=True, header_style="bold magenta")
+    table.add_column("CVE ID", style="cyan", width=18)
+    table.add_column("Severity", style="red", width=10)
+    table.add_column("Score", justify="center", width=6)
+    table.add_column("Service", style="yellow", width=15)
+    table.add_column("Description", style="white", width=40)
+    
+    # Mostrar apenas top 10 mais críticos
+    for cve in cves[:10]:
+        cve_id = cve.get('id', 'N/A')
+        severity = cve.get('severity', 'UNKNOWN')
+        # Handle both 'cvss' and 'score' keys
+        score = str(cve.get('score', cve.get('cvss', 'N/A')))
+        service = cve.get('affected_service', 'N/A')
+        # Use 'summary' if 'description' not available
+        desc = cve.get('description', cve.get('summary', 'N/A'))[:50] + "..."
+        
+        # Cor por severidade
+        severity_style = {
+            'CRITICAL': 'red bold',
+            'HIGH': 'yellow',
+            'MEDIUM': 'white',
+            'LOW': 'green'
+        }.get(severity, 'white')
+        
+        table.add_row(cve_id, f"[{severity_style}]{severity}[/{severity_style}]", score, service, desc)
+    
+    console.print(table)
+    
+    if len(cves) > 10:
+        console.print(f"[dim]... and {len(cves) - 10} more (check full report)[/dim]\n")
 
 
 def auto_cve_scan(services, report_path, log_file=None):
