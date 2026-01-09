@@ -1,9 +1,13 @@
 from modules.scan import (
     nmap_quick, nmap_detailed, nmap_full_tcp,
     nmap_udp_scan, nmap_os_detection, full_scan_workflow,
-    full_scan_with_cve
+    full_scan_with_cve, extract_services_from_output
 )
-from modules.utils import banner, log
+from modules.cve_checker import (
+    check_service_vulnerabilities, create_cve_summary_table,
+    check_cve_nvd, format_cve_report
+)
+from modules.utils import banner, log, append_section
 from colorama import Fore
 from rich.panel import Panel
 from rich.console import Console
@@ -46,15 +50,12 @@ def run_scan_menu(target, run_dir, report_path, session_log):
             console.print("[cyan]└─────────────────────────────────────┘[/cyan]\n")
             
             # Extrair serviços do output do Nmap
-            from modules.scan import extract_services_from_output
             services = extract_services_from_output(output)
             
             if services:
                 log(Fore.CYAN + f"[i] Found {len(services)} services, checking for CVEs...", session_log)
                 
-                # Importar e executar CVE checker
-                from modules.cve_checker import check_service_vulnerabilities, create_cve_summary_table
-                
+                # Executar CVE checker
                 cves = check_service_vulnerabilities(services, report_path, session_log)
                 
                 # Mostrar resumo visual no terminal
@@ -83,7 +84,6 @@ def run_scan_menu(target, run_dir, report_path, session_log):
             version = input(Fore.YELLOW + "[?] Version (e.g., 2.4.29, 7.4): ").strip()
             
             if service and version:
-                from modules.cve_checker import check_cve_nvd, create_cve_summary_table, format_cve_report
                 log(Fore.CYAN + f"[i] Checking {service} {version}...", session_log)
                 
                 cves = check_cve_nvd(service, version, session_log)
@@ -101,7 +101,6 @@ def run_scan_menu(target, run_dir, report_path, session_log):
                     
                     # Adicionar ao report
                     cve_report = format_cve_report(cves, [{'service': service, 'version': version, 'port': 'manual'}])
-                    from modules.utils import append_section
                     append_section(report_path, f"MANUAL CVE CHECK - {service} {version}", cve_report)
                 else:
                     console.print(f"[green]✓ No CVEs found for {service} {version}[/green]")

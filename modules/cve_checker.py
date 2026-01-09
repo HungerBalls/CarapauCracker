@@ -391,7 +391,9 @@ def format_cve_report(cves, services):
         lines.append(f"    Severity:    {severity}")
         lines.append(f"    CVSS Score:  {score}")
         lines.append(f"    Published:   {published}")
-        lines.append(f"    Description: {description[:250]}...")  # Limitar a 250 chars
+        # Limitar a 250 chars e adicionar ... apenas se necessário
+        desc_text = description[:250] + ('...' if len(description) > 250 else '')
+        lines.append(f"    Description: {desc_text}")
         lines.append(f"    Reference:   https://nvd.nist.gov/vuln/detail/{cve_id}")
         lines.append("")
         lines.append("-" * 70)
@@ -426,7 +428,8 @@ def create_cve_summary_table(cves):
         cve_id = cve.get('id', 'N/A')
         severity = cve.get('severity', 'UNKNOWN')
         score = str(cve.get('score', 'N/A'))
-        desc = cve.get('description', 'N/A')[:60] + "..."
+        desc_full = cve.get('description', 'N/A')
+        desc = desc_full[:60] + ('...' if len(desc_full) > 60 else '')
         
         # Cor por severidade
         severity_style = {
