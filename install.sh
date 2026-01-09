@@ -1,7 +1,7 @@
 #!/bin/bash
 # ======================================================================
 #  🐟 CarapauCracker Installer v4
-#  Advanced Pentesting Framework 🇬🇧 — by HungerBalls 🎯
+#  Advanced Pentesting Framework  — by HungerBalls 🎯
 # ======================================================================
 
 CYAN='\033[0;36m'
@@ -85,7 +85,7 @@ if [ -f "requirements.txt" ]; then
     
     while IFS= read -r package; do
         # Skip empty lines and comments
-        [[ -z "$package" || "$package" =~ ^#. * ]] && continue
+        [[ -z "$package" || "$package" =~ ^#.* ]] && continue
         
         CURRENT=$((CURRENT + 1))
         show_progress $CURRENT $TOTAL_DEPS
