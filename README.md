@@ -533,17 +533,6 @@ PORT     STATE SERVICE    VERSION
 }
 ```
 
-<<<<<<< HEAD
-=======
-### Executive Summary
-
-- Highlights only
-- First 5 lines per section
-- Statistics and recommendations
-- Quick overview for management
-
----
-
 ## 🎯 Use Cases
 
 ### CTF Competitions
@@ -570,43 +559,6 @@ PORT     STATE SERVICE    VERSION
 4. **Best Practices**: Security-focused design
 
 ---
-
-## ⚠️ LEGAL DISCLAIMER
-
-> **FOR EDUCATIONAL AND AUTHORIZED TESTING PURPOSES ONLY**
-
-```
-⚖️ TERMS OF USE AND RESPONSIBILITY
-
-This software is provided "AS IS" exclusively for: 
-✓ Controlled laboratory environments
-✓ Penetration tests authorized in writing
-✓ Educational and research purposes
-✓ Legitimate security audits
-✓ CTF competitions (authorized)
-
-❌ ILLEGAL USE PROHIBITED: 
-- Testing systems without explicit authorization
-- Attacks on third-party infrastructure
-- Any activity that violates local/international laws
-- Unauthorized access attempts
-
-The author is NOT responsible for:
-- Misuse or illegal use of this tool
-- Damage caused to systems or networks
-- Legal consequences of unauthorized actions
-
-By using this software, you agree to: 
-1. Obtain written authorization before any test
-2. Respect all applicable laws
-3. Take full responsibility for your actions
-4. Use only in authorized environments
-
-🔒 "With great power comes great responsibility"
-```
-
----
->>>>>>> 41434a7 (Read ME atualizado mais payload.py)
 
 ## 🤝 Contributions
 
@@ -648,8 +600,6 @@ Found a bug or have a suggestion? [Open an issue](https://github.com/HungerBalls
 
 ---
 
-<<<<<<< HEAD
-=======
 ## 🌟 Acknowledgments
 
 Tools and projects that made this possible:
@@ -664,23 +614,7 @@ Tools and projects that made this possible:
 
 ---
 
-## 🚀 Roadmap
 
-### Coming Soon
-
-- [ ] Metasploit integration
-- [ ] Burp Suite integration
-- [ ] Privilege escalation helpers
-- [ ] File transfer utilities
-- [ ] Port forwarding/tunneling
-- [ ] Web shell auto-upload
-- [ ] Clipboard integration
-- [ ] One-liner generator
-- [ ] Docker support
-- [ ] API REST interface
-
----
->>>>>>> 41434a7 (Read ME atualizado mais payload.py)
 
 <div align="center">
 
