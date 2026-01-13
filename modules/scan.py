@@ -1,25 +1,51 @@
 # scan.py — CarapauCracker v3
 import re
+from typing import List, Dict, Optional
+from pathlib import Path
 from modules.utils import run_command_live, append_section, log
+from modules.config import SCAN_CONFIG, validate_ip, sanitize_input
 from colorama import Fore
 from rich.console import Console
 from rich.table import Table
-from rich.progress import Progress
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
 
 # ================================================================
 # 🔍 INTEGRATED AND VISUAL NMAP SCAN
 # ================================================================
 
-def run_nmap(ip: str, args: list, title: str, report_path, log_file=None) -> str:
+def run_nmap(ip: str, args: List[str], title: str, report_path: Path, log_file: Optional[Path] = None, timeout: Optional[int] = None) -> str:
     """
     Generic function to run Nmap with live output + logging + report
+    
+    Args:
+        ip: Target IP address
+        args: Nmap arguments as list
+        title: Scan title for logging
+        report_path: Path to report file
+        log_file: Optional log file path
+        timeout: Optional timeout in seconds
+    
+    Returns:
+        Nmap output as string
     """
+    # Validate IP
+    if not validate_ip(ip):
+        log(Fore.RED + f"[✘] Invalid IP address: {ip}", log_file)
+        return ""
+    
+    # Sanitize arguments
+    args = [sanitize_input(str(arg)) for arg in args if arg]
+    
     try:
         log(Fore.CYAN + f"\n[🧪] {title} in progress...", log_file)
         log(Fore.MAGENTA + f"    ➤ Command: nmap {' '.join(args)} {ip}\n", log_file)
 
+        # Use timeout from config if not provided
+        if timeout is None:
+            timeout = SCAN_CONFIG.get("nmap_timeout", 300)
+
         # Execute command and show in real-time
-        output = run_command_live(["nmap"] + args + [ip], log_file)
+        output = run_command_live(["nmap"] + args + [ip], log_file, timeout=timeout)
 
         if output:
             append_section(report_path, title, output)
@@ -30,7 +56,7 @@ def run_nmap(ip: str, args: list, title: str, report_path, log_file=None) -> str
         return output
     except Exception as e:
         error_msg = f"Error running {title}: {str(e)}"
-        log(Fore.RED + f"[✘] {error_msg}", log_file)
+        log(Fore.RED + f"[✘] {error_msg}", log_file, level="ERROR")
         return ""
 
 
@@ -53,8 +79,16 @@ def display_scan_results(services):
     console.print(table)
 
 
-def extract_services_from_output(nmap_output):
-    """Extract services with port, service name and version from nmap output"""
+def extract_services_from_output(nmap_output: str) -> List[Dict[str, str]]:
+    """
+    Extract services with port, service name and version from nmap output
+    
+    Args:
+        nmap_output: Raw Nmap output string
+    
+    Returns:
+        List of service dictionaries with 'port', 'service', and 'version' keys
+    """
     services = []
     try:
         for line in nmap_output.splitlines():
@@ -67,7 +101,7 @@ def extract_services_from_output(nmap_output):
                 })
         return services
     except Exception as e:
-        print(Fore.RED + f"[✘] Error extracting services: {e}")
+        log(Fore.RED + f"[✘] Error extracting services: {e}", None, level="ERROR")
         return []
 
 

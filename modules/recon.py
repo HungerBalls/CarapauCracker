@@ -1,22 +1,40 @@
-# recon.py — CarapauCracker v2
+# recon.py — CarapauCracker v3
 import socket
 import subprocess
 import requests
+from typing import Dict, Optional
+from pathlib import Path
 from modules.utils import log, run_command_live, append_section
+from modules.config import GEOIP_API_URL, GEOIP_TIMEOUT, validate_ip, sanitize_input
 from colorama import Fore
 
 # ================================================================
 # 🔍 AUTOMATED BASIC RECONNAISSANCE
 # ================================================================
 
-def reverse_dns(ip: str, log_file=None) -> dict:
-    """Perform reverse DNS lookup on target IP"""
+def reverse_dns(ip: str, log_file: Optional[Path] = None) -> Dict[str, any]:
+    """
+    Perform reverse DNS lookup on target IP
+    
+    Args:
+        ip: IP address to lookup
+        log_file: Optional log file path
+    
+    Returns:
+        Dictionary with hostname and aliases
+    """
+    # Validate IP
+    if not validate_ip(ip):
+        log(Fore.RED + f"[✘] Invalid IP address: {ip}", log_file)
+        return {"hostname": "N/A", "aliases": []}
+    
     log(f"[i] Performing reverse DNS lookup on {ip}...", log_file)
     result = {}
     try:
+        socket.setdefaulttimeout(5)
         hostname, aliases, _ = socket.gethostbyaddr(ip)
         result["hostname"] = hostname
-        result["aliases"] = aliases
+        result["aliases"] = list(aliases) if aliases else []
         log(Fore.GREEN + f"[✔] Hostname found: {hostname}", log_file)
     except socket.herror:
         result["hostname"] = "N/A"
@@ -29,7 +47,9 @@ def reverse_dns(ip: str, log_file=None) -> dict:
     except Exception as e:
         result["hostname"] = "N/A"
         result["aliases"] = []
-        log(Fore.RED + f"[✘] Reverse DNS error: {e}", log_file)
+        log(Fore.RED + f"[✘] Reverse DNS error: {e}", log_file, level="ERROR")
+    finally:
+        socket.setdefaulttimeout(None)
     return result
 
 
@@ -53,11 +73,32 @@ def whois_lookup(ip: str, log_file=None) -> str:
         return error_msg
 
 
-def geoip_lookup(ip: str, log_file=None) -> dict:
-    """Perform GEO-IP lookup using ip-api.com"""
+def geoip_lookup(ip: str, log_file: Optional[Path] = None) -> Dict[str, str]:
+    """
+    Perform GEO-IP lookup using ip-api.com
+    
+    Args:
+        ip: IP address to lookup
+        log_file: Optional log file path
+    
+    Returns:
+        Dictionary with geo-location information
+    """
+    # Validate IP
+    if not validate_ip(ip):
+        log(Fore.RED + f"[✘] Invalid IP address: {ip}", log_file)
+        return {
+            "country": "N/A",
+            "region": "N/A",
+            "city": "N/A",
+            "org": "N/A",
+            "isp": "N/A"
+        }
+    
     log(f"[i] Performing GEO-IP lookup (ip-api.com) on {ip}...", log_file)
     try:
-        response = requests.get(f"http://ip-api.com/json/{ip}", timeout=10)
+        url = f"{GEOIP_API_URL}/{ip}"
+        response = requests.get(url, timeout=GEOIP_TIMEOUT)
         if response.status_code == 200:
             data = response.json()
             if data.get('status') == 'success':
@@ -89,19 +130,48 @@ def geoip_lookup(ip: str, log_file=None) -> dict:
     }
 
 
-def banner_grab(ip: str, port: int, log_file=None) -> str:
+def banner_grab(ip: str, port: int, log_file: Optional[Path] = None, timeout: int = 3) -> str:
     """
     Perform basic banner grabbing for services (HTTP, SSH, FTP, etc.)
+    
+    Args:
+        ip: Target IP address
+        port: Target port number
+        log_file: Optional log file path
+        timeout: Connection timeout in seconds
+    
+    Returns:
+        Banner string or "N/A" if failed
     """
+    # Validate inputs
+    if not validate_ip(ip):
+        log(Fore.RED + f"[✘] Invalid IP address: {ip}", log_file)
+        return "N/A (invalid IP)"
+    
+    from modules.config import validate_port
+    if not validate_port(port):
+        log(Fore.RED + f"[✘] Invalid port number: {port}", log_file)
+        return "N/A (invalid port)"
+    
     try:
-        s = socket.socket()
-        s.settimeout(3)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(timeout)
         s.connect((ip, port))
-        s.send(b"HEAD / HTTP/1.0\r\n\r\n")
-        banner = s.recv(1024).decode(errors="ignore")
+        
+        # Try HTTP banner first
+        try:
+            s.send(b"HEAD / HTTP/1.0\r\n\r\n")
+            banner = s.recv(1024).decode(errors="ignore")
+        except:
+            # If HTTP fails, try generic banner grab
+            banner = s.recv(1024).decode(errors="ignore")
+        
         s.close()
-        log(Fore.GREEN + f"[✔] Banner found on {ip}:{port}", log_file)
-        return banner.strip()
+        if banner and banner.strip():
+            log(Fore.GREEN + f"[✔] Banner found on {ip}:{port}", log_file)
+            return banner.strip()
+        else:
+            return "N/A (empty response)"
     except socket.timeout:
         log(Fore.YELLOW + f"[⚠] Banner grab timeout on {ip}:{port}", log_file)
         return "N/A (timeout)"
@@ -113,14 +183,27 @@ def banner_grab(ip: str, port: int, log_file=None) -> str:
         return "N/A"
 
 
-def basic_recon(ip: str, report_path, log_file=None):
+def basic_recon(ip: str, report_path: Path, log_file: Optional[Path] = None) -> Dict[str, any]:
     """
     Perform all basic reconnaissance tasks:
     - Reverse DNS
     - WHOIS
     - GEO-IP
     - Banner grabbing
+    
+    Args:
+        ip: Target IP address
+        report_path: Path to report file
+        log_file: Optional log file path
+    
+    Returns:
+        Dictionary with all reconnaissance data
     """
+    # Validate IP
+    if not validate_ip(ip):
+        log(Fore.RED + f"[✘] Invalid IP address: {ip}", log_file)
+        return {"ip": ip, "error": "Invalid IP address"}
+    
     try:
         log(Fore.CYAN + f"\n[🔍] Starting basic reconnaissance of {ip}", log_file)
 

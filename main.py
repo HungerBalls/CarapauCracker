@@ -1,18 +1,22 @@
-# main.py — CarapauCracker v2
+# main.py — CarapauCracker v3
 
 from dotenv import load_dotenv
 from modules.utils import banner, make_run_dir, is_alive, log, validate_dependencies
 from modules.report import export_pdf, export_json, export_summary
+from modules.config import validate_ip, validate_hostname, sanitize_input
 from menus.menu_recon import run_recon_menu
 from menus.menu_scan import run_scan_menu
 from menus.menu_web_enum import run_web_enum_menu
 from menus.menu_exploit import run_exploit_menu
 from menus.menu_brute import run_brute_menu
+from menus.menu_payloads import run_payloads_menu
+from menus.menu_ctf import run_ctf_menu
 from colorama import Fore, init
 from rich.panel import Panel
 from rich.console import Console
 from pathlib import Path
 import os
+import sys
 
 # Load environment variables from .env file
 load_dotenv()
@@ -36,9 +40,22 @@ def main():
         if not target:
             print(Fore.RED + "[✘] Invalid target. Try again.")
             return
+        
+        # Sanitize and validate target
+        target = sanitize_input(target)
+        if not target:
+            print(Fore.RED + "[✘] Target cannot be empty after sanitization.")
+            return
+        
+        # Validate target format
+        if not (validate_ip(target) or validate_hostname(target)):
+            print(Fore.RED + "[✘] Invalid target format. Please enter a valid IP address or hostname.")
+            return
 
+        # Optional connectivity check
+        console.print("[cyan][i] Checking target connectivity...[/cyan]")
         if not is_alive(target):
-            print(Fore.YELLOW + "[⚠] Target may not be online or responding to ping.")
+            console.print("[yellow][⚠] Target may not be online or responding to ping.[/yellow]")
             cont = input(Fore.YELLOW + "    Continue anyway? (y/N): ").lower()
             if cont != 'y':
                 return
@@ -59,7 +76,9 @@ def main():
                 "[cyan]3[/cyan] - Advanced Web Enumeration\n"
                 "[cyan]4[/cyan] - Automated Exploitation (Searchsploit)\n"
                 "[cyan]5[/cyan] - Brute Force Attacks (Hydra)\n"
-                "[cyan]6[/cyan] - Export Final Report 📄\n"
+                "[cyan]6[/cyan] - Payload Generator 💣\n"
+                "[cyan]7[/cyan] - CTF Mode 🏆\n"
+                "[cyan]8[/cyan] - Export Final Report 📄\n"
                 "[cyan]0[/cyan] - Exit Session ⛔",
                 title="🎯 MAIN MENU - CARAPAUPANEL",
                 border_style="cyan"
@@ -79,6 +98,10 @@ def main():
                 elif choice == "5":
                     run_brute_menu(target, run_dir, report_path, session_log)
                 elif choice == "6":
+                    run_payloads_menu(target, run_dir, report_path, session_log)
+                elif choice == "7":
+                    run_ctf_menu(target, run_dir, report_path, session_log)
+                elif choice == "8":
                     banner()
                     console.print(Panel.fit(
                         "[cyan]1[/cyan] - PDF Full Report (only findings)\n"
