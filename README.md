@@ -376,40 +376,6 @@ PORT     STATE SERVICE    VERSION
 }
 ```
 
----
-
-## ⚠️ LEGAL DISCLAIMER
-
-> **FOR EDUCATIONAL AND AUTHORIZED TESTING PURPOSES ONLY**
-
-```
-⚖️ TERMS OF USE AND RESPONSIBILITY
-
-This software is provided "AS IS" exclusively for: 
-✓ Controlled laboratory environments
-✓ Penetration tests authorized in writing
-✓ Educational and research purposes
-✓ Legitimate security audits
-
-❌ ILLEGAL USE PROHIBITED: 
-- Testing systems without explicit authorization
-- Attacks on third-party infrastructure
-- Any activity that violates local/international laws
-
-The author is NOT responsible for:
-- Misuse or illegal use of this tool
-- Damage caused to systems or networks
-- Legal consequences of unauthorized actions
-
-By using this software, you agree to: 
-1. Obtain written authorization before any test
-2. Respect all applicable laws
-3. Take full responsibility for your actions
-
-🔒 "With great power comes great responsibility"
-```
-
----
 
 ## 🤝 Contributions
 
@@ -449,18 +415,6 @@ Found a bug or have a suggestion? [Open an issue](https://github.com/HungerBalls
 
 ---
 
-## 🌟 Acknowledgments
-
-Tools and projects that made this possible:
-
-- [Nmap](https://nmap.org/) - Network scanning
-- [Hydra](https://github.com/vanhauser-thc/thc-hydra) - Brute force attacks
-- [Gobuster](https://github.com/OJ/gobuster) - Directory brute forcing
-- [Nikto](https://cirt.net/Nikto2) - Web server scanning
-- [FFUF](https://github.com/ffuf/ffuf) - Web fuzzing
-- [SearchSploit](https://www.exploit-db.com/searchsploit) - Exploit database
-
----
 
 <div align="center">
 
