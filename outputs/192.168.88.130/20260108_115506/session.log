@@ -1,0 +1,8 @@
+
+=== Início da sessão CarapauCracker para 192.168.88.130 ===
+[33m[!] Nenhuma porta TCP aberta encontrada no Quick Scan. A correr full detailed scan (-sV -sC -p-).
+[36m
+[🧪] Nmap Detailed Scan em execução...
+[35m    ➤ Comando: nmap -sV -sC -p- -T4 192.168.88.130
+
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2026-01-08 11:55 WET
