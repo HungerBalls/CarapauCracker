@@ -1,6 +1,7 @@
 colorama>=0.4.6
 reportlab>=3.6.0
 requests>=2.31.0
-fpdf>=2.5.0
+fpdf2>=2.7.0
 rich>=13.0.0
 python-dotenv>=1.0.0
+
