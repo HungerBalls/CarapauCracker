@@ -73,33 +73,55 @@ apt install -y python3 python3-pip 2>&1 | grep -E "Setting up|Unpacking" | while
 done
 
 echo -e "${YELLOW}→ Upgrading pip...${NC}"
-pip install --upgrade pip --progress-bar on --break-system-packages 2>&1
+pip install --upgrade pip --break-system-packages --quiet
 
 if [ -f "requirements.txt" ]; then
     echo -e "${YELLOW}→ Installing dependencies from requirements.txt...${NC}"
     
-    # Contar total de pacotes (sem linhas vazias)
+    # Contar pacotes
     TOTAL_DEPS=$(grep -v '^$' requirements.txt | grep -v '^#' | wc -l)
     echo -e "${CYAN}  Found $TOTAL_DEPS packages to install${NC}\n"
     
-    # Instalar com output visível
+    # Instalar tudo de uma vez com output limpo
     pip install -r requirements.txt --break-system-packages 2>&1 | while read line; do
         if [[ "$line" == *"Successfully installed"* ]]; then
             echo -e "${GREEN}  ✓ $line${NC}"
         elif [[ "$line" == *"Requirement already satisfied"* ]]; then
-            echo -e "${CYAN}  ⊙ $(echo $line | cut -d': ' -f2)${NC}"
+            # Extrair apenas o nome do pacote
+            package=$(echo "$line" | awk '{print $4}')
+            echo -e "${CYAN}  ⊙ Already installed: $package${NC}"
         elif [[ "$line" == *"ERROR"* ]] || [[ "$line" == *"error"* ]]; then
             echo -e "${RED}  ✘ $line${NC}"
         elif [[ "$line" == *"Collecting"* ]]; then
-            echo -e "${YELLOW}  → $line${NC}"
+            package=$(echo "$line" | awk '{print $2}')
+            echo -e "${YELLOW}  → Collecting $package${NC}"
+        elif [[ "$line" == *"Downloading"* ]]; then
+            # Mostrar só uma linha por download
+            package=$(echo "$line" | awk '{print $2}')
+            echo -ne "${CYAN}  ↓ Downloading $package.. .\r${NC}"
         fi
     done
     
-    # Verificar status final
-    if pip show colorama fpdf2 rich reportlab requests python-dotenv &>/dev/null; then
+    echo -e "\n"
+    
+    # Verificar instalação final
+    echo -e "${YELLOW}→ Verifying installation...${NC}"
+    all_installed=true
+    
+    for package in colorama reportlab fpdf2 requests rich python-dotenv; do
+        if pip show "$package" &>/dev/null; then
+            echo -e "${GREEN}  ✓ $package installed${NC}"
+        else
+            echo -e "${RED}  ✘ $package NOT installed${NC}"
+            all_installed=false
+        fi
+    done
+    
+    if [ "$all_installed" = true ]; then
         echo -e "\n${GREEN}[✔] All Python dependencies installed successfully.${NC}\n"
     else
-        echo -e "\n${RED}[✘] Some dependencies failed to install.${NC}\n"
+        echo -e "\n${RED}[✘] Some dependencies failed to install.  Please check errors above.${NC}\n"
+        exit 1
     fi
 else
     echo -e "${RED}[! ] requirements.txt file not found. ${NC}\n"
