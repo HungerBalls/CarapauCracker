@@ -54,8 +54,7 @@ apt update -y 2>&1 | while read line; do
 done
 
 echo -e "\n${CYAN}→ Running apt upgrade (this may take a while)...${NC}"
-DEBIAN_FRONTEND=noninteractive apt upgrade -y 2>&1 | pv -p -t -e -N "Upgrading packages" > /dev/null 2>&1 || \
-apt upgrade -y 2>&1 | while read line; do
+DEBIAN_FRONTEND=noninteractive apt upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" 2>&1 | while read line; do
     if [[ "$line" == *"Unpacking"* ]] || [[ "$line" == *"Setting up"* ]] || [[ "$line" == *"Processing"* ]]; then
         echo -e "${GREEN}  ✓ $line${NC}"
     fi
