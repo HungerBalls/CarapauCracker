@@ -40,39 +40,45 @@ def run_scan_menu(target, run_dir, report_path, session_log):
             log(Fore.CYAN + f"\n[NMAP] Running detailed scan on {target}", session_log)
             output = nmap_detailed(target, [], report_path, session_log)
             
-            # ═══ NOVO: CVE Analysis Automático ═══
-            console.print("\n[cyan]┌─────────────────────────────────────┐[/cyan]")
-            console.print("[cyan]│  Starting CVE Analysis...           │[/cyan]")
-            console.print("[cyan]└─────────────────────────────────────┘[/cyan]\n")
-            
             # Extrair serviços do output do Nmap
             from modules.scan import extract_services_from_output
             services = extract_services_from_output(output)
             
             if services:
-                log(Fore.CYAN + f"[i] Found {len(services)} services, checking for CVEs...", session_log)
+                # Mostrar serviços encontrados
+                console. print(f"\n[green]✓ Found {len(services)} services with version info[/green]")
                 
-                # Importar e executar CVE checker
-                from modules.cve_checker import check_service_vulnerabilities, create_cve_summary_table
+                # ═══ PERGUNTAR se quer fazer CVE check ═══
+                run_cve = input(Fore.YELLOW + "\n[?] Run CVE vulnerability check on these services? (Y/n): ").strip().lower()
                 
-                try:
-                    cves = check_service_vulnerabilities(services, report_path, session_log)
+                if run_cve != 'n':  # Default é "yes"
+                    console.print("\n[cyan]┌─────────────────────────────────────┐[/cyan]")
+                    console.print("[cyan]│  Starting CVE Analysis...            │[/cyan]")
+                    console.print("[cyan]└─────────────────────────────────────┘[/cyan]\n")
                     
-                    # Mostrar resumo visual no terminal
-                    if cves:
-                        create_cve_summary_table(cves)
+                    # Importar e executar CVE checker
+                    from modules.cve_checker import check_service_vulnerabilities, create_cve_summary_table
+                    
+                    try:
+                        cves = check_service_vulnerabilities(services, report_path, session_log)
                         
-                        # Sugestão de próximos passos
-                        console.print("\n[yellow]💡 Tip: Check 'Automated Exploitation' menu to search for exploits[/yellow]")
-                    else:
-                        console.print("[green]✓ Good news! No known CVEs for detected service versions[/green]")
-                
-                except Exception as e:
-                    log(Fore.RED + f"[✘] Error during CVE analysis: {e}", session_log)
-                    console.print(f"[red][✘] CVE analysis failed: {e}[/red]")
+                        # Mostrar resumo visual no terminal
+                        if cves:
+                            create_cve_summary_table(cves)
+                            
+                            # Sugestão de próximos passos
+                            console.print("\n[yellow]💡 Tip: Check 'Automated Exploitation' menu to search for exploits[/yellow]")
+                        else:
+                            console.print("[green]✓ Good news! No known CVEs for detected service versions[/green]")
+                    
+                    except Exception as e: 
+                        log(Fore.RED + f"[✘] Error during CVE analysis: {e}", session_log)
+                        console.print(f"[red][✘] CVE analysis failed:  {e}[/red]")
+                else:
+                    console.print("[yellow]⊘ CVE check skipped[/yellow]")
             else:
-                log(Fore.YELLOW + "[!] No services with version info found, skipping CVE check", session_log)
-                console.print("[yellow][⚠] No services with version detected - skipping CVE check[/yellow]")
+                log(Fore. YELLOW + "[!] No services with version info found", session_log)
+                console. print("[yellow][⚠] No services with version detected[/yellow]")
         elif opt == "3":
             nmap_full_tcp(target, report_path, session_log)
         elif opt == "4":
@@ -120,3 +126,4 @@ def run_scan_menu(target, run_dir, report_path, session_log):
             log(Fore.RED + "[✘] Invalid option. Try again.", session_log)
 
         input(Fore.YELLOW + "\nPress ENTER to continue...")
+
