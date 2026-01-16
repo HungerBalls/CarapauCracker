@@ -110,6 +110,26 @@ def nmap_quick(ip: str, report_path, log_file=None) -> str:
     return run_nmap(ip, ["-T4", "--open"], "Nmap Quick Scan", report_path, log_file)
 
 
+def quick_scan(target: str, common_ports: bool = False) -> str:
+    """
+    Generate nmap quick scan command string for CTF mode
+    
+    Args:
+        target: Target IP or hostname
+        common_ports: If True, scan only common ports
+    
+    Returns:
+        Command string ready to execute
+    """
+    if common_ports:
+        # Common CTF ports: 21,22,23,25,53,80,110,139,143,443,445,3306,3389,5900,8080,8443
+        ports = "21,22,23,25,53,80,110,139,143,443,445,3306,3389,5900,8080,8443"
+        return f"nmap -T4 -p {ports} --open -sV {target}"
+    else: 
+        return f"nmap -T4 --top-ports 1000 --open {target}"
+
+
+
 def extract_open_tcp_ports(nmap_output: str) -> list:
     """Extract open TCP ports from nmap output"""
     try:
