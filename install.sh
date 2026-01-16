@@ -133,7 +133,7 @@ fi
 # ======================================================================
 TOOLS=(
   nmap whois curl whatweb nikto gobuster ffuf sslscan hydra
-  exploitdb figlet jq
+   figlet jq
 )
 
 TOTAL_TOOLS=${#TOOLS[@]}
