@@ -78,24 +78,32 @@ pip install --upgrade pip --progress-bar on --break-system-packages 2>&1
 if [ -f "requirements.txt" ]; then
     echo -e "${YELLOW}→ Installing dependencies from requirements.txt...${NC}"
     
-    # Count total dependencies
-    TOTAL_DEPS=$(wc -l < requirements.txt)
-    CURRENT=0
+    # Contar total de pacotes (sem linhas vazias)
+    TOTAL_DEPS=$(grep -v '^$' requirements.txt | grep -v '^#' | wc -l)
+    echo -e "${CYAN}  Found $TOTAL_DEPS packages to install${NC}\n"
     
-    while IFS= read -r package; do
-        # Skip empty lines and comments
-        [[ -z "$package" || "$package" =~ ^#.* ]] && continue
-        
-        CURRENT=$((CURRENT + 1))
-        show_progress $CURRENT $TOTAL_DEPS
-        echo -ne " Installing ${package}.. .\r"
-        
-        pip install "$package" --progress-bar off --break-system-packages >/dev/null 2>&1
-    done < requirements.txt
+    # Instalar com output visível
+    pip install -r requirements.txt --break-system-packages 2>&1 | while read line; do
+        if [[ "$line" == *"Successfully installed"* ]]; then
+            echo -e "${GREEN}  ✓ $line${NC}"
+        elif [[ "$line" == *"Requirement already satisfied"* ]]; then
+            echo -e "${CYAN}  ⊙ $(echo $line | cut -d': ' -f2)${NC}"
+        elif [[ "$line" == *"ERROR"* ]] || [[ "$line" == *"error"* ]]; then
+            echo -e "${RED}  ✘ $line${NC}"
+        elif [[ "$line" == *"Collecting"* ]]; then
+            echo -e "${YELLOW}  → $line${NC}"
+        fi
+    done
     
-    echo -e "\n${GREEN}[✔] Python dependencies installed. ${NC}\n"
+    # Verificar status final
+    if pip show colorama fpdf2 rich reportlab requests python-dotenv &>/dev/null; then
+        echo -e "\n${GREEN}[✔] All Python dependencies installed successfully.${NC}\n"
+    else
+        echo -e "\n${RED}[✘] Some dependencies failed to install.${NC}\n"
+    fi
 else
-    echo -e "${RED}[!] requirements.txt file not found. You can create it manually.${NC}\n"
+    echo -e "${RED}[! ] requirements.txt file not found. ${NC}\n"
+    exit 1
 fi
 
 # ======================================================================
