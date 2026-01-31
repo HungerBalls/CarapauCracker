@@ -78,9 +78,16 @@ def brute_ftp(ip: str, report_path, log_file=None, **kwargs):
 
 
 def brute_ssh(ip: str, report_path, log_file=None, **kwargs):
-    """Brute force SSH service"""
-    return run_hydra("ssh", ip, report_path=report_path, log_file=log_file, **kwargs)
-
+    """Brute force SSH service (legacy MAC support)"""
+    extra_args = ["-m", "macs=hmac-sha1"]
+    return run_hydra(
+        "ssh",
+        ip,
+        extra_args=extra_args,
+        report_path=report_path,
+        log_file=log_file,
+        **kwargs
+    )
 
 def brute_http_post(
     ip: str,
@@ -185,3 +192,4 @@ def full_bruteforce(ip: str, report_path, log_file=None):
     except Exception as e:
         error_msg = f"Error in full brute force: {str(e)}"
         log(Fore.RED + f"[✘] {error_msg}", log_file)
+
